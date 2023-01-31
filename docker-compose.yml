@@ -2,11 +2,39 @@ version: '3'
 services:
   postgres_db:
     container_name: "postgres_db"
-    image:  postgres:15
+    image: postgres:latest
     restart: always
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=dima
-      - POSTGRES_PASSWORD
-      - 
+      - POSTGRES_PASSWORD=2001ah2002
+      - POSTGRES_DB=update_database
+    volumes:
+      - ./database_data:/var/lib/postgresql/data
+  client-nginx:
+    build: client
+    ports:
+      - "80:80"
+#    volumes: # This is where the magic happens!
+#      - ./client:/usr/src/client
+#      - /usr/src/client/node_modules/
+#      - ./build:/usr/src/client/build
+  server:
+    build: backend
+    ports:
+      - "5000:5000"
+    restart: always
+    command: yarn start
+    environment:
+      - EXTERNAL_PORT=5000
+      - PGDATABASE=update_database
+      - PGUSER=dima
+      - PGPASSWORD=2001ah2002
+      - PGHOST=postgres_db
+      - SECRET_KEY=2001ah2002
+    depends_on:
+      - postgres_db
+    volumes: # This is where the magic happens!
+      - ./backend:/usr/src/backend
+      - /usr/src/backend/node_modules/

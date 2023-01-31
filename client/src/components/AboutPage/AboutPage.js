@@ -3,10 +3,9 @@ import React from 'react';
 const AboutPage = (props) => {
     return (
         <div>
-            {props.Data && props.Data.map(e => (<div>
-                {e.Id}||{e.Text}
+            {props.Data && props.Data.map((e, index) => (<div key={`text ${index}`}>
+                {e.id} || {e.text}
             </div>))}
-            <button onClick={() => props.getDataThunk()}>запросить</button>
         </div>
     );
 };
