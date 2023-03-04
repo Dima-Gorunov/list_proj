@@ -8,6 +8,7 @@
 
 ## Development
 После клонирования репозитория не забудьте выполнить команду `npm install`, находясь для установки node-modules.
+Postgres тоже должен быть установлен на вашем пк
 ### start client 
 `npm start`, чтобы запустить client 
 
