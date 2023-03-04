@@ -14,7 +14,7 @@ Postgres тоже должен быть установлен на вашем п�
 
 
 ### start backend
-`npm run start`, чтобы запустить client
+`npm run start`, чтобы запустить backend
 
 ## Production
 
