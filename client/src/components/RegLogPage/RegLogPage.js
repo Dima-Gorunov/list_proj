@@ -19,7 +19,7 @@ const RegLogPage = (props) => {
             }
             navigate('/')
         } catch (e) {
-            props.setUserError(e.response.data.message)
+            props.setUserError(e.response ? e.response.data.message : e.message)
         }
     }
 

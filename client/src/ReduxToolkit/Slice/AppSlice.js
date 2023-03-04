@@ -32,7 +32,7 @@ const AppSlice = createSlice({
                     id: payload.id,
                     text: payload.text
                 }]
-            }else {
+            } else {
                 state.Data.push({
                     id: payload.id,
                     text: payload.text
@@ -65,8 +65,11 @@ export const getDataThunk = (userId) => {
 }
 export const deleteListThunk = (id) => {
     return async (dispatch) => {
-        await DefaultApi.deleteList(id)
-        dispatch(AppSlice.actions.deleteList(id))
+        await DefaultApi.deleteList(id).then(response => {
+            dispatch(AppSlice.actions.deleteList(response.id))
+        }, error => {
+            dispatch(AppSlice.actions.setListError(error.response.data.message))
+        })
     }
 }
 

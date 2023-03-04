@@ -24,31 +24,27 @@ export const DefaultApi = {
     registration(email, password) {
         return instance.post(`api/user/registration`, {email, password}).then(response => {
             localStorage.setItem('token', response.data.token)
+            console.log("reg");
             return jwtDecode(response.data.token)
         })
     },
     login(email, password) {
         return instance.post('api/user/login', {email, password}).then(response => {
             localStorage.setItem('token', response.data.token)
+            console.log("log");
             return jwtDecode(response.data.token)
         })
     },
     getList(userId) {
         console.log(` id on axios: ${userId}`);
-        return instance.get(`api/list?userId=${userId}`)
+        return authInstance.get(`api/list?userId=${userId}`)
     },
     addList(text, userId) {
-        return instance.post('api/list', {text: text, userId: userId}).then(response => response.data)
-    }
-}
-
-
-export const authApi = {
-    getList() {
-        return instance.get(`api/list`)
+        return authInstance.post('api/list', {text: text, userId: userId}).then(response => response.data)
     },
     deleteList(id) {
-        return instance.delete(`api/list`, {data: {id: id}})
+        return authInstance.delete('api/list', {data: {id}}).then(response=>response.data)
     }
 }
+
 

@@ -65,6 +65,8 @@ export const checkThunk = () => {
     return async (dispatch) => {
         await DefaultApi.check().then(data => {
             dispatch(UserSlice.actions.setAuth(data))
+        }, error => {
+            console.log(error.response.data.message || "some");
         })
     }
 }

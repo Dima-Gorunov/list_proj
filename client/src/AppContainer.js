@@ -11,17 +11,19 @@ import {useNavigate} from "react-router";
 import Loader from "./components/Loader";
 
 const AppContainer = (props) => {
-    const [load, setLoad] = useState(true)
+    const [load, setLoad] = useState(true);
     const navigate = useNavigate()
-    useEffect(async () => {
-        try {
+    useEffect(() => {
+        async function check() {
             await props.checkThunk()
+        }
+
+        check().finally(() => {
             setLoad(false)
             navigate('/')
-        } catch (e) {
-            setLoad(false)
-        }
+        });
     }, [])
+
     if (load) {
         return <Loader/>
     }

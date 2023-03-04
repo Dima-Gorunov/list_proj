@@ -1,25 +1,22 @@
+const uuid = require('uuid')
+const path = require('path')
 const {User} = require("../models/models");
-
 const {List} = require('../models/models')
+
 
 class ListController {
 
     async create(req, res) {
-        try {
-            const {text, userId} = req.body
-            if (!text || !userId) {
-                return res.status(401).json({result_code: 1, message: "request error (paste text, userId)"})
-            }
-            const obj = await List.findOne({where: {text, userId}})
-            if (obj) {
-                return res.status(401).json({result_code: 1, message: "list exist"})
-            }
-            const list = await List.create({text, userId})
-
-            return res.json(list)
-        } catch (e) {
-            return res.status(401).json({result_code: 1, message: "ERROR"})
+        const {text, userId} = req.body
+        if (!text || !userId) {
+            return res.status(400).json({result_code: 1, message: "request error (paste text, userId)"})
         }
+        const obj = await List.findOne({where: {text, userId}})
+        if (obj) {
+            return res.status(400).json({result_code: 1, message: "list exist"})
+        }
+        const list = await List.create({text, userId})
+        return res.json(list)
     }
 
     async update(req, res) {
@@ -31,10 +28,9 @@ class ListController {
 
     async deleteList(req, res) {
         const {id} = req.body
-        const user = req.user
-        const list = await List.findOne({where: {id: id, userId: user.id}})
+        const list = await List.findOne({where: {id: id}})
         if (!list) {
-            return res.status(401).json({result_code: 1, message: "list not found"})
+            return res.status(400).json({result_code: 1, message: "list not found"})
         }
         await List.destroy({where: {id: id}})
         return res.json(list)
@@ -52,7 +48,7 @@ class ListController {
         }
         const lists = await List.findAll({where: {userId: req.query.userId}})
         if (!lists || lists.length === 0) {
-            return res.json({result_code: 1, message: "list not exist"})
+            return res.status(400).json({result_code: 1, message: "list not exist"})
         }
         return res.json(lists)
     }

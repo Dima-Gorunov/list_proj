@@ -2,11 +2,18 @@ const {Sequelize} = require("sequelize")
 
 
 module.exports = new Sequelize(
-    process.env.PGDATABASE,
+    "file_img",
+    "postgres",
+    "2001ah2002",
+    {
+        dialect: "postgres",
+        host: "localhost"
+    }
+    /*process.env.PGDATABASE,
     process.env.PGUSER,
     process.env.PGPASSWORD,
     {
-        dialect: 'postgres',
+        dialect: `postgres`,
         host: process.env.PGHOST
-    }
+    }*/
 )
