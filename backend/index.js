@@ -5,7 +5,6 @@ const cors = require('cors')
 const router = require('./routes/index')
 const app = express()
 const PORT = process.env.EXTERNAL_PORT || 5000
-const {fileFolderPath} = require('./constant')
 // app.use(fileUpload({}))
 // app.use(express.static(defaultPath+"\\static"))
 app.use(cors())
