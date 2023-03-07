@@ -7,7 +7,9 @@ const AppSlice = createSlice({
         Input: "",
         Data: null,
         Success: false,
-        ListError: ""
+        ListError: "",
+        File: null,
+        FileFormActive: true
     },
 
     reducers: {
@@ -44,6 +46,12 @@ const AppSlice = createSlice({
         },
         setListError(state, {payload}) {
             state.ListError = payload
+        },
+        setFile(state, {payload}) {
+            state.File = payload
+        },
+        setActiveFileForm(state, {payload}) {
+            state.FileFormActive = payload
         }
     }
 })
@@ -52,23 +60,23 @@ export const getDataThunk = (userId) => {
     return async (dispatch) => {
         await DefaultApi.getList(userId).then(response => {
             if (response.data.result_code === 1) {
-                dispatch(AppSlice.actions.setData(null))
+                dispatch(setData(null))
                 return
             }
-            dispatch(AppSlice.actions.setData(response.data))
-            dispatch(AppSlice.actions.sortData())
-            dispatch(AppSlice.actions.setSuccess(true))
+            dispatch(setData(response.data))
+            dispatch(sortData())
+            dispatch(setSuccess(true))
         }, error => {
-            dispatch(AppSlice.actions.setData(null))
+            dispatch(setData(null))
         })
     }
 }
 export const deleteListThunk = (id) => {
     return async (dispatch) => {
         await DefaultApi.deleteList(id).then(response => {
-            dispatch(AppSlice.actions.deleteList(response.id))
+            dispatch(deleteList(response.id))
         }, error => {
-            dispatch(AppSlice.actions.setListError(error.response.data.message))
+            dispatch(setListError(error.response.data.message))
         })
     }
 }
@@ -76,11 +84,21 @@ export const deleteListThunk = (id) => {
 export const addListThunk = (text, userId) => {
     return async (dispatch) => {
         await DefaultApi.addList(text, userId).then(response => {
-            dispatch(AppSlice.actions.addList(response))
-            dispatch(AppSlice.actions.changeInput(""))
+            dispatch(addList(response))
+            dispatch(changeInput(""))
+            dispatch(setActiveFileForm(false))
         }, error => {
-            dispatch(AppSlice.actions.setListError(error.response.data.message))
+            dispatch(setListError(error.response.data.message))
         })
+    }
+}
+
+export const uploadFileThunk = (file) => {
+    return async (dispatch) => {
+        await DefaultApi.addFile(file).then(response => {
+            console.log(response);
+        })
+        dispatch(setFile(file))
     }
 }
 
@@ -88,5 +106,13 @@ export const addListThunk = (text, userId) => {
 export default AppSlice.reducer
 
 export const {
-    changeInput
+    setSuccess,
+    changeInput,
+    setData,
+    sortData,
+    addList,
+    deleteList,
+    setListError,
+    setFile,
+    setActiveFileForm,
 } = AppSlice.actions

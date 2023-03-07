@@ -5,14 +5,14 @@ const instance = axios.create({
     baseURL: "http://localhost:5000/"
 })
 
-const authInstance = axios.create({
+const authInstance = axios.create({                     // далее прикрепляет в хедер auth токен
     baseURL: "http://localhost:5000/"
 })
 const authInterceptor = config => {
     config.headers.authorization = `Bearer ${localStorage.getItem('token')}`
     return config
 }
-authInstance.interceptors.request.use(authInterceptor)
+authInstance.interceptors.request.use(authInterceptor)  // связывает authInstance и authInterceptor
 
 export const DefaultApi = {
     check() {
@@ -43,7 +43,11 @@ export const DefaultApi = {
         return authInstance.post('api/list', {text: text, userId: userId}).then(response => response.data)
     },
     deleteList(id) {
-        return authInstance.delete('api/list', {data: {id}}).then(response=>response.data)
+        return authInstance.delete('api/list', {data: {id}}).then(response => response.data)
+    },
+    addFile(file) {
+        console.log(file);
+        return authInstance.post('api/file/upload', file)
     }
 }
 

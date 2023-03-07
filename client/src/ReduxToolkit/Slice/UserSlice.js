@@ -30,13 +30,13 @@ const UserSlice = createSlice({
 export const regThunk = (email, password) => {
     return async (dispatch) => {
         await DefaultApi.registration(email, password).then(response => {
-                dispatch(UserSlice.actions.setAuth(response))
-                dispatch(UserSlice.actions.setUserError(""))
+                dispatch(setAuth(response))
+                dispatch(setUserError(""))
             }
             /*, error => {
             // если мы обработаем ошибку тут, то в компоненте не сможем её обработать и попать в блок catch
             //    делаем для того чтобы перенаправить в случае успешного запроса на сервер
-                dispatch(UserSlice.actions.setUserError(error.response.data.message))
+                dispatch(setUserError(error.response.data.message))
             }*/)
     }
 }
@@ -44,13 +44,13 @@ export const regThunk = (email, password) => {
 export const setAuthThunk = (email, password) => {
     return async (dispatch) => {
         await DefaultApi.login(email, password).then(response => {
-                dispatch(UserSlice.actions.setAuth(response))
-                dispatch(UserSlice.actions.setUserError(""))
+                dispatch(setAuth(response))
+                dispatch(setUserError(""))
             }
             /*, error => {
             // если мы обработаем ошибку тут, то в компоненте не сможем её обработать и попать в блок catch
             //    делаем для того чтобы перенаправить в случае успешного запроса на сервер.
-                dispatch(UserSlice.actions.setUserError(error.response.data.message))
+                dispatch(setUserError(error.response.data.message))
             }*/)
     }
 }
@@ -64,7 +64,7 @@ export const logoutThunk = () => {
 export const checkThunk = () => {
     return async (dispatch) => {
         await DefaultApi.check().then(data => {
-            dispatch(UserSlice.actions.setAuth(data))
+            dispatch(setAuth(data))
         }, error => {
             console.log(error.response.data.message || "some");
         })

@@ -6,7 +6,7 @@
 готового к запуску на сервере c инструкциями: https://github.com/Dima-Gorunov/docker-nginx-deploy
 
 
-##Development
+## Development
 ###start client 
 `npm start`, чтобы запустить client 
 

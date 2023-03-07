@@ -10,7 +10,7 @@ module.exports = function (role) {
             if (!token) {
                 return res.status(401).json({result_code: 1, message: "no authorized (!token)"})
             }
-            const decoded = jwt.verify(token, process.env.SECRET_KEY) // example: => {id: 13} т.к кодируем только id
+            const decoded = jwt.verify(token, "some_string") // example: => {id: 13} т.к кодируем только id
                                                                       // если функция не выполнится => исключение
             const user = await User.findOne({where: {id: decoded.id}})
             if (user.role !== role) {

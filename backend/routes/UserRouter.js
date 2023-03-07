@@ -13,6 +13,6 @@ router.get('/auth', authMiddleware, userController.check)  // => {...data:{user:
 //                                                         // ..в результате возвращается user id.. далее..
 //                                                         // ..можно делать запросы к базе по id
 router.put('/update', userController.updateUser)
-router.put('/setRole', checkRoleMiddleware("ADMIN"), userController.setRole)
+router.put('/setRole',  userController.setRole)
 router.delete('/delete', checkRoleMiddleware("ADMIN"), userController.deleteUser)
 module.exports = router

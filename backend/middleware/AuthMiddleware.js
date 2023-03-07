@@ -9,7 +9,7 @@ module.exports = function (req, res, next) { // функция, проверяю
         if (!token) {
             return res.status(401).json({result_code: 1, message: "no authorized (!token)"})
         }
-        const decoded = jwt.verify(token, "2001ah2002" /*process.env.SECRET_KEY*/) // example: => {id: 13} т.к кодируем только id
+        const decoded = jwt.verify(token, "some_string" /*process.env.SECRET_KEY*/) // example: => {id: 13} т.к кодируем только id
                                                                   // если функция не выполнится => исключение
         req.user = decoded    // далее в req.user будет лежать {user:{id,email,username,role}}
         next()

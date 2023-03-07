@@ -1,19 +1,31 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const {User} = require('../models/models')
+const {mkdir} = require('fs/promises');
+const {join, resolve} = require('path')
+const {fileFolderPath} = require('../constant')
 
 const generateJwt = ({id, email, role, username}) => {
     return jwt.sign({id, email, role, username},
-        "2001ah2002", //process.env.SECRET_KEY,
+        "some_string", //process.env.SECRET_KEY,
         {
             expiresIn: '24h'
         })
+
+    // {
+    //     "id": 4,
+    //     "email": "gorunov-01",
+    //     "role": "USER",
+    //     "username": null,
+    //     "iat": 1678070188,
+    //     "exp": 1678156588
+    // }
 }
 
 class UserController {
 
     async registration(req, res) {
-        const {email, password} = req.body
+        const {email, password} = req.body // must be string
         if (!email || !password) {
             return res.status(400).json({result_code: 1, message: "data no correct"})
         }
@@ -24,9 +36,18 @@ class UserController {
         const salt = await bcrypt.genSalt(10)
         const hashPassword = await bcrypt.hash(password, salt)
         const user = await User.create({email, password: hashPassword})
+
         //
         // тут будет отправка ссылки на почту и логика проверки
         //
+        // -------folder------
+        // await mkdir(join(__dirname + "/../../files", `user_${user.id}`, "images"), {recursive: true});
+        // await mkdir(join(__dirname + "/../../files", `user_${user.id}`, "files"), {recursive: true});
+        const folders = ["images", "files"]
+        folders.forEach(async (e) => {
+            await mkdir(join(fileFolderPath, `user_${user.id}`, e), {recursive: true});
+        })
+        //--------------------
         const token = generateJwt(user); //первая генерация токена при регистрации
         return res.json({token: token})
     }
