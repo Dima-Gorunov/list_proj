@@ -41,12 +41,12 @@ class UserController {
         // тут будет отправка ссылки на почту и логика проверки
         //
         // -------folder------
-        // await mkdir(join(__dirname + "/../../files", `user_${user.id}`, "images"), {recursive: true});
-        // await mkdir(join(__dirname + "/../../files", `user_${user.id}`, "files"), {recursive: true});
-        const folders = ["images", "files"]
-        folders.forEach(async (e) => {
-            await mkdir(join(fileFolderPath, `user_${user.id}`, e), {recursive: true});
-        })
+        // const folders = ["images", "files"]
+        // folders.forEach(async (e) => {
+        //     await mkdir(join(fileFolderPath, `user_${user.id}`, e), {recursive: true});
+        // })
+        // РЕАЛИЗОВАЛ В MULTER ПРИ ПЕРВОЙ ЗАГРУЗКЕ ФАЙЛА..
+        // ТЕПЕРЬ ПОКА У ПОЛЬЗОВАТЕЛЯ НЕТ ФАЙЛОВ - ПАПКИ ТОЖЕ НЕТ
         //--------------------
         const token = generateJwt(user); //первая генерация токена при регистрации
         return res.json({token: token})
