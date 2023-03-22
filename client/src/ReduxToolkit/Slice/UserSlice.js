@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {DefaultApi} from "../../Api/Api";
+import {DefaultApi} from "../../Api/AuthInstance";
 import {AuthApi} from "../../Api/AuthApi";
 import axios from 'axios'
 

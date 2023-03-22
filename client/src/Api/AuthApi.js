@@ -1,23 +1,5 @@
-import axios from "axios";
+import {authInstance, instance} from "./AuthInstance"
 import jwtDecode from "jwt-decode";
-
-const instance = axios.create({
-    withCredentials: true,
-    baseURL: "http://localhost:5000/"
-})
-
-const authInstance = axios.create({                     // далее прикрепляет в хедер auth токен
-    withCredentials: true,   // отправлять с куками
-    baseURL: "http://localhost:5000/"
-})
-
-const authInterceptor = config => {
-    config.headers.authorization = `Bearer ${localStorage.getItem('token')}`
-    console.log(config.headers.authorization);
-    return config
-}
-authInstance.interceptors.request.use(authInterceptor)  // связывает authInstance и authInterceptor
-
 
 export const AuthApi = {
     registration(email, password) {

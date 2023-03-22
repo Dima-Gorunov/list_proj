@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useParams} from "react-router";
 import FileIcon from "../../Svg/FileIcon";
-import {DefaultApi} from "../../Api/Api";
+import {DefaultApi} from "../../Api/AuthInstance";
 import {AuthApi} from "../../Api/AuthApi";
 
 const UserPage = (props) => {

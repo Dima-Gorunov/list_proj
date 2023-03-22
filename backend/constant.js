@@ -15,11 +15,12 @@ const serverName = process.env.SERVER_NAME || 'http://localhost:5000'
 const clientName = process.env.CLIENT_NAME || 'http://localhost:3000'
 const JWT_ACCESS_STRING = process.env.JWT_ACCESS_STRING || "some_string_access"
 const JWT_REFRESH_STRING = process.env.JWT_REFRESH_STRING || "some_string_refresh"
+
 //
 const generateFileName = (originalName) => `${moment().format('DDMMYYYY-HHmmss-SSS')}_${originalName}`
 //
 const createAbsolutePath = (path) => join(fileFolderPath + "/" + path)
-// for static images
+// for static images || files
 const createFullUrl = (urlPath, fileName) => serverName + "/" + urlPath + fileName
 
 module.exports = {
