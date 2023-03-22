@@ -1,5 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {DefaultApi} from "../../Api/Api";
+import {ListApi} from "../../Api/ListApi";
 
 const AppSlice = createSlice({
     name: "AppSlice",
@@ -9,7 +9,8 @@ const AppSlice = createSlice({
         Success: false,
         ListError: "",
         File: null,
-        FileFormActive: true
+        FileFormActive: true,
+        Image: null
     },
 
     reducers: {
@@ -22,22 +23,25 @@ const AppSlice = createSlice({
         setData(state, {payload}) {
             state.Data = payload ? payload.map((e, index) => ({
                 id: e.id,
-                text: e.text
+                text: e.text,
+                img: e.img
             })) : null
         },
         sortData(state, {payload}) {
-            state.Data = state.Data ? state.Data.sort((a, b) => a.id - b.id) : null
+            state.Data = state.Data ? state.Data.sort((a, b) => b.id - a.id) : null
         },
         addList(state, {payload}) {
             if (!state.Data) {
                 state.Data = [{
                     id: payload.id,
-                    text: payload.text
+                    text: payload.text,
+                    img: payload.img
                 }]
             } else {
                 state.Data.push({
                     id: payload.id,
-                    text: payload.text
+                    text: payload.text,
+                    img: payload.img
                 })
             }
         },
@@ -52,56 +56,49 @@ const AppSlice = createSlice({
         },
         setActiveFileForm(state, {payload}) {
             state.FileFormActive = payload
+        },
+        setImage(state, {payload}) {
+            state.Image = payload
         }
     }
 })
 
-export const getDataThunk = (userId) => {
+export const getDataThunk = () => {
     return async (dispatch) => {
-        await DefaultApi.getList(userId).then(response => {
-            if (response.data.result_code === 1) {
-                dispatch(setData(null))
-                return
-            }
+        try {
+            const response = await ListApi.getList()
             dispatch(setData(response.data))
             dispatch(sortData())
             dispatch(setSuccess(true))
-        }, error => {
+        } catch (e) {
+            console.log(e.message);
             dispatch(setData(null))
-        })
+        }
     }
 }
 export const deleteListThunk = (id) => {
     return async (dispatch) => {
-        await DefaultApi.deleteList(id).then(response => {
-            dispatch(deleteList(response.id))
-        }, error => {
-            dispatch(setListError(error.response.data.message))
-        })
+        try {
+            const response = await ListApi.deleteList(id)
+            dispatch(deleteList(response.data.id))
+        } catch (e) {
+            console.log(e.message);
+        }
     }
 }
 
-export const addListThunk = (text, userId) => {
+export const addListThunk = (formData) => {
     return async (dispatch) => {
-        await DefaultApi.addList(text, userId).then(response => {
-            dispatch(addList(response))
+        try {
+            const response = await ListApi.addList(formData)
+            dispatch(addList(response.data))
+            dispatch(sortData())
             dispatch(changeInput(""))
-            dispatch(setActiveFileForm(false))
-        }, error => {
-            dispatch(setListError(error.response.data.message))
-        })
+        } catch (e) {
+            console.log(e.message);
+        }
     }
 }
-
-export const uploadFileThunk = (file) => {
-    return async (dispatch) => {
-        await DefaultApi.addFile(file).then(response => {
-            console.log(response);
-        })
-        dispatch(setFile(file))
-    }
-}
-
 
 export default AppSlice.reducer
 
@@ -113,6 +110,6 @@ export const {
     addList,
     deleteList,
     setListError,
-    setFile,
     setActiveFileForm,
+    setImage
 } = AppSlice.actions

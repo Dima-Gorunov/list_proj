@@ -1,3 +1,9 @@
+:root {
+    --background-color: #111112;
+    --background-primary-color: #222222;
+    --border-color: #424242;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -5,5 +11,12 @@
 }
 
 .App {
+    background-color: var(--background-color);
     width: 100%;
+}
+
+.dark_container {
+    background-color: var(--background-primary-color);
+    border-radius: 5px;
+    border: 2px solid var(--border-color)
 }

@@ -1,19 +1,29 @@
 const jwt = require('jsonwebtoken')
-
-module.exports = function (req, res, next) { // функция, проверяющая токен пользователя
-    if (req.method === 'OPTIONS') {
-        next()
-    }
+const {JWT_ACCESS_STRING} = require('../constant')
+const tokenService = require('../service/token-service')
+module.exports = async function (req, res, next) { // функция, проверяющая токен пользователя
     try {
-        const token = req.headers.authorization.split(' ')[1]   // цепляет токен из браузера
-        if (!token) {
-            return res.status(401).json({result_code: 1, message: "no authorized (!token)"})
+        console.log(req.method);
+        if (req.method === 'OPTIONS') {
+            next()
         }
-        const decoded = jwt.verify(token, "some_string" /*process.env.SECRET_KEY*/) // example: => {id: 13} т.к кодируем только id
-                                                                  // если функция не выполнится => исключение
-        req.user = decoded    // далее в req.user будет лежать {user:{id,email,username,role}}
+        const accessToken = await req.headers.authorization.split(' ')[1]   // цепляет токен из браузера
+
+        if (!accessToken) {
+            console.log("!accessToken")
+            return res.status(401).json({result_code: 1, message: "no authorized (accessToken)"})
+        }
+        const userData = await tokenService.validateAccessToken(accessToken)
+        if (!userData) {
+            return res.status(401).json({result_code: 1, message: "verify no complete"})
+        }
+        // если функция не выполнится => исключение
+        req.user = userData    // далее в req.user будет лежать {user:{id,email,username,role}}
+        console.log(req.user);
         next()
     } catch (e) { // если токен не валиднен, выполнится блок catch
-        return res.status(401).json({result_code: 1, message: "no authorized"})
+        console.log("qweqwe")
+        console.log(e.message);
+        return res.status(401).json({result_code: 1, message: e.message})
     }
 }

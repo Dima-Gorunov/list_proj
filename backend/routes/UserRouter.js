@@ -3,16 +3,21 @@ const router = new Router()
 const userController = require('../controllers/UserController')
 const authMiddleware = require('../middleware/AuthMiddleware')
 const checkRoleMiddleware = require('../middleware/CheckRoleMiddleware')
+const avatarStorage = require("../middleware/filemiddleware/avatarStorage")
+const {body} = require("express-validator")
 
+router.post('/testMethod', userController.testMethod)
 
-router.post('/registration', userController.registration)// => {...data:{user:{id, email, role}, token:"w2g8ehj35h9g3ujq25"}}
-router.post('/login', userController.login) // => {...data:{token:"24gdef5f9gqw"}}
-router.get('/getAll', checkRoleMiddleware("ADMIN"), userController.getAll) // => {... data:{[***]} ...}
-router.get('/auth', authMiddleware, userController.check)  // => {...data:{user:{id, email, role}, newToken:"28f7ew5h89q2w"}}
-//                                                         // при этом запросе из header цепляется токен и..
-//                                                         // ..в результате возвращается user id.. далее..
-//                                                         // ..можно делать запросы к базе по id
+router.post('/registration', userController.testRegistration)
+router.get('/activate/:link', userController.activate)
+router.post('/login', userController.testLogin)
+router.post('/logout', userController.testLogout)
+router.get('/refresh', userController.refresh)  // выцепляем refreshToken из cookies каждый раз
+router.get('/getAll', checkRoleMiddleware("ADMIN"), userController.getAll)
+router.get('/auth', authMiddleware, userController.check)
+router.get('/info', authMiddleware, userController.getInfo)
+router.put('/setAvatar', authMiddleware, avatarStorage.fields([{name: 'file'}]), userController.setAvatar)
 router.put('/update', userController.updateUser)
-router.put('/setRole',  userController.setRole)
+router.put('/setRole', userController.setRole)
 router.delete('/delete', checkRoleMiddleware("ADMIN"), userController.deleteUser)
 module.exports = router

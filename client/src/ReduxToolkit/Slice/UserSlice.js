@@ -1,25 +1,38 @@
 import {createSlice} from "@reduxjs/toolkit";
 import {DefaultApi} from "../../Api/Api";
+import {AuthApi} from "../../Api/AuthApi";
+import axios from 'axios'
 
 const UserSlice = createSlice({
     name: 'UserSlice',
     initialState: {
         User: {
-            id: null,
-            email: null,
-            username: null,
-            role: null,
-            isAuth: false,
+            Id: null,
+            Email: null,
+            Username: null,
+            Role: null,
+            IsAuth: false,
+            Activate: false,
+            IsAdmin: false,
+            Avatar: null
         },
         UserError: ""
     },
     reducers: {
+        setUser(state, {payload}) {
+            state.User.Id = payload?.id || null
+            state.User.Email = payload?.email || null
+            state.User.Username = payload?.username || null
+            state.User.Role = payload?.role || null
+            state.User.IsAdmin = payload?.role === "ADMIN" || false
+            state.User.Activated = payload?.activated || false
+            state.User.Avatar = payload?.avatar || null
+        },
         setAuth(state, {payload}) {
-            state.User.id = payload.id
-            state.User.email = payload.email
-            state.User.username = payload.username
-            state.User.role = payload.role
-            state.User.isAuth = !!payload.id
+            state.User.IsAuth = payload
+        },
+        setAvatar(state, {payload}) {
+            state.User.Avatar = payload
         },
         setUserError(state, {payload}) {
             state.UserError = payload
@@ -29,51 +42,70 @@ const UserSlice = createSlice({
 
 export const regThunk = (email, password) => {
     return async (dispatch) => {
-        await DefaultApi.registration(email, password).then(response => {
-                dispatch(setAuth(response))
-                dispatch(setUserError(""))
-            }
-            /*, error => {
-            // если мы обработаем ошибку тут, то в компоненте не сможем её обработать и попать в блок catch
-            //    делаем для того чтобы перенаправить в случае успешного запроса на сервер
-                dispatch(setUserError(error.response.data.message))
-            }*/)
+        try {
+            const response = await AuthApi.registration(email, password)
+            console.log(response);
+            localStorage.setItem('token', response.data.accessToken)
+            dispatch(setAuth(true))
+            const userInfo = await AuthApi.getInfo()
+            dispatch(setUser(userInfo.data.user))
+        } catch (e) {
+            console.log(e.response?.data?.message);
+            dispatch(setUserError(e.response?.data?.message || "Error"))
+        }
     }
 }
 
-export const setAuthThunk = (email, password) => {
+export const loginThunk = (email, password) => {
     return async (dispatch) => {
-        await DefaultApi.login(email, password).then(response => {
-                dispatch(setAuth(response))
-                dispatch(setUserError(""))
-            }
-            /*, error => {
-            // если мы обработаем ошибку тут, то в компоненте не сможем её обработать и попать в блок catch
-            //    делаем для того чтобы перенаправить в случае успешного запроса на сервер.
-                dispatch(setUserError(error.response.data.message))
-            }*/)
+        try {
+            const response = await AuthApi.login(email, password)
+            console.log(response);
+            localStorage.setItem('token', response.data.accessToken)
+            dispatch(setAuth(true))
+            const userInfo = await AuthApi.getInfo()
+            dispatch(setUser(userInfo.data.user))
+        } catch (e) {
+            console.log(e.response?.data?.message);
+            dispatch(setUserError(e.response?.data?.message || "Error"))
+        }
     }
 }
 
-export const logoutThunk = () => {
+export const logOutThunk = () => {
     return async (dispatch) => {
-        localStorage.setItem('token', "")
+        try {
+            const response = await AuthApi.logout()  // backend refreshToken=>null
+            localStorage.removeItem('token')
+            dispatch(setAuth(null))
+            dispatch(setUser(null))
+        } catch (e) {
+            console.log(e.response?.data?.message);
+        }
     }
 }
 
-export const checkThunk = () => {
+export const checkAuthThunk = () => {
     return async (dispatch) => {
-        await DefaultApi.check().then(data => {
-            dispatch(setAuth(data))
-        }, error => {
-            console.log(error.response.data.message || "some");
-        })
+        try {
+            const response = await AuthApi.checkAuth()
+            console.log(response);
+            localStorage.setItem('token', response.data.accessToken)
+            dispatch(setAuth(true))
+            const userInfo = await AuthApi.getInfo()
+            dispatch(setUser(userInfo.data.user))
+        } catch (e) {
+            console.log(e.response?.data?.message);
+            dispatch(setAuth(false))
+            dispatch(setUser(null))
+        }
     }
 }
 
 export default UserSlice.reducer
 
 export const {
-    setAuth,
-    setUserError
+    setUser,
+    setUserError,
+    setAuth
 } = UserSlice.actions

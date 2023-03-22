@@ -4,7 +4,8 @@ import {connect} from "react-redux";
 import {getDataThunk} from "../../ReduxToolkit/Slice/AppSlice";
 import {getSuccess} from "../../ReduxToolkit/Selectors/AppSelector";
 import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
-import {setAuth} from "../../ReduxToolkit/Slice/UserSlice";
+import {logOutThunk, setAuth} from "../../ReduxToolkit/Slice/UserSlice";
+import {useNavigate} from "react-router";
 
 const HomePageContainer = (props) => {
     return <HomePage {...props} />
@@ -19,5 +20,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
     getDataThunk,
-    setAuth
+    setAuth,
+    logOutThunk
 })(HomePageContainer);

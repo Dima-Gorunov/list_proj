@@ -8,16 +8,24 @@ const instance = axios.create({
 const authInstance = axios.create({                     // далее прикрепляет в хедер auth токен
     baseURL: "http://localhost:5000/"
 })
+
+const multipartInstance = axios.create({
+    baseURL: "http://localhost:5000/"
+})
+
 const authInterceptor = config => {
     config.headers.authorization = `Bearer ${localStorage.getItem('token')}`
+    console.log(config.headers.authorization);
     return config
 }
+
 authInstance.interceptors.request.use(authInterceptor)  // связывает authInstance и authInterceptor
 
 export const DefaultApi = {
     check() {
         return authInstance.get(`api/user/auth`).then(response => {
             localStorage.setItem('token', response.data.token)
+            console.log(jwtDecode(response.data.token));
             return jwtDecode(response.data.token)
         })
     },
@@ -31,23 +39,41 @@ export const DefaultApi = {
     login(email, password) {
         return instance.post('api/user/login', {email, password}).then(response => {
             localStorage.setItem('token', response.data.token)
-            console.log("log");
-            return jwtDecode(response.data.token)
+            return jwtDecode(response.data.accessToken)
         })
     },
-    getList(userId) {
-        console.log(` id on axios: ${userId}`);
-        return authInstance.get(`api/list?userId=${userId}`)
+    getInfo() {
+        return authInstance.get('api/user/info').then(response => {
+            return response.data
+        })
     },
-    addList(text, userId) {
-        return authInstance.post('api/list', {text: text, userId: userId}).then(response => response.data)
+    getList() {
+        return authInstance.get(`api/list`)
+    },
+    addList(formData) {
+        // formData ={text:**, file:**}
+        return authInstance.post('api/list', formData)
     },
     deleteList(id) {
-        return authInstance.delete('api/list', {data: {id}}).then(response => response.data)
+        return authInstance.delete('api/list', {data: {id}})
     },
-    addFile(file) {
-        console.log(file);
-        return authInstance.post('api/file/upload', file)
+    addFile(formData) {
+        //  formData.append("data", some_data) => then on back some_data===req.body.data
+        formData.append('dataform', "form append")
+        return authInstance.post('api/file/upload', formData)
+    },
+    getFile() {
+        return authInstance.get('api/file', {responseType: 'blob'}).then(response => {
+            return URL.createObjectURL(response.data)
+        })
+    },
+    getAvatar() {
+        return authInstance.get('api/user/avatar', {responseType: 'blob'}).then(response => {
+            return URL.createObjectURL(response.data)
+        })
+    },
+    setAvatar(formData) {
+        return authInstance.put('api/user/setavatar', formData)
     }
 }
 

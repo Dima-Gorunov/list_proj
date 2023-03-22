@@ -1,14 +1,11 @@
 import {useState} from "react";
+import FileIcon from "../../Svg/FileIcon";
+import CustomButton from "../CustomElements/CustomButton";
 
 const WorkPage = (props) => {
 
-    const [FileFormActive, setFileFormActive] = useState(false)
-
-    const formActive = (e) => {
-        e.preventDefault()
-        setFileFormActive(!FileFormActive)
-    }
-
+    const [File, setFile] = useState(null)
+    const [Drag, setDrag] = useState(false)
     const change = (e) => {
         e.preventDefault()
         console.log(e.currentTarget.value)
@@ -17,48 +14,115 @@ const WorkPage = (props) => {
 
     const addList = async (e) => {
         e.preventDefault()
-        await props.addListThunk(props.Input, props.User.id)
+        let formData = new FormData()
+        formData.append("text", props.Input)
+        if (File) {
+            formData.append("file", File)
+        }
+        await props.addListThunk(formData)
     }
 
     const fileChange = (e) => {
-        props.setFile(e.target.files[0])
+        setFile(e.target.files[0])
     }
 
-    const uploadFile = (e) => {
-        let formData = new FormData()
-        formData.append("file", props.File)
+    const dragStartHandler = (e) => {
         e.preventDefault()
-        props.uploadFileThunk(formData)
+        setDrag(true)
+    }
+    const dragLeaveHandler = (e) => {
+        e.preventDefault()
+    }
+    const onDropHandler = (e) => {
+        e.preventDefault()
+        setFile(e.dataTransfer.files[0])
     }
 
     return (
-        <div className="p-2">
+        <div className="">
             {props.ListError && <div>err: {props.ListError}</div>}
-            <form className="form-inline">
-                <div className="d-flex mb-3">
-                    <input className="form-control me-3" value={props.Input} onChange={change} type="text"
-                           placeholder="Search" aria-label="текст"/>
-                    <button className="border border-white bg-dark text-white p-1 text-decoration-none"
-                            onClick={addList} type="submit">Добавить
-                    </button>
-                </div>
-                <button onClick={formActive}>Добавить файл?
-                </button>
-                {FileFormActive && <div className="form-group col-md-6">
-                    <label className="text-white">Select File :</label>
-                    <input type="file" multiple={true} className="form-control" name="file" onChange={fileChange}/>
-                    <button type="submit" onClick={uploadFile}>добавить</button>
-                </div>}
-            </form>
-            {props.Data ? props.Data.map((e, index) => (
-                <div className="d-flex mb-3 justify-content-between" key={`div n${index}`}>
-                    <div className="w-100 me-3 border border-top-0 border-start-0 ">
-                        {e.text}
+            <div className="p-3 mb-5 dark_container" style={{}}>
+                <form className="form-inline">
+                    <div className="form-group">
+                        <div className="d-flex mb-3">
+                            <input className="form-control me-2" value={props.Input} onChange={change} type="text"
+                                   placeholder="Search" aria-label="текст"/>
+                            <label htmlFor="file">
+                                <div style={{width: "35px", cursor: "pointer"}} className="me-2">
+                                    <FileIcon/>
+                                </div>
+                                <input accept=".jpg, .png" type="file" id="file" onChange={fileChange} hidden={true}/>
+                            </label>
+                            <CustomButton
+                                onClick={addList} type="submit">Опубликовать
+                            </CustomButton>
+                        </div>
+                        <div>
+                            {<div style={{
+                                display: File ? "none" : "flex",
+                                width: "300px",
+                                height: "150px",
+                                background: "var(--border-color)",
+                                borderRadius: "10px",
+                                border: "2px dashed white",
+                                color: "grey",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                textAlign:"center"
+                            }}
+                                  onDragStart={(e) => dragStartHandler(e)}
+                                  onDragLeave={(e) => dragLeaveHandler(e)}
+                                  onDragOver={(e) => dragStartHandler(e)}
+                                  onDrop={(e) => onDropHandler(e)}
+                            >
+                                Перетащите сюда картинку <br/>
+                                       (.jpg .png)
+                            </div>}
+                            {File && <div>
+                                <div className="mb-3">
+                                    Прикреплённый файл: {File.name}
+                                </div>
+                                <div>
+                                    <div className="me-2 mb-2">
+                                        <img src={URL.createObjectURL(File)} style={{height: "100px"}} alt=""/>
+                                    </div>
+                                    <CustomButton type="button" onClick={() => setFile(null)}
+                                                  style={{
+                                                      height: "35px",
+                                                      background: "var(--background-primary-color)"
+                                                  }}
+                                                  className="border align-self-end border-white text-white p-1 text-decoration-none"
+                                    >удалить
+                                    </CustomButton>
+                                </div>
+                            </div>}
+                        </div>
                     </div>
-                    <button type="button" className="border border-white bg-dark text-white p-1 text-decoration-none"
-                            onClick={() => props.deleteListThunk(e.id)}>удалить
-                    </button>
-                </div>)) : <div>нет данных</div>}
+                </form>
+
+            </div>
+            <div>
+                {props.Data ? props.Data.map((e, index) => (
+                    <div className="p-3 mb-5 dark_container" style={{}} key={`div n${index}`}>
+                        <div className="w-100 mb-3 ">
+                            {e.text}
+                        </div>
+                        <div className="d-flex justify-content-between">
+                            <div className="">
+                                {e.img && <img src={e.img} style={{width: "70%",  maxHeight: "250px", objectFit:"cover"}} alt=""/>}</div>
+                            <button type="button" style={{
+                                backgroundColor: "var(--background-primary-color)",
+                                color: "white",
+                                padding: "4px",
+                                borderRadius: "5px",
+                                border: "1px solid white"
+                            }}
+                                    className="align-self-end"
+                                    onClick={() => props.deleteListThunk(e.id)}>удалить
+                            </button>
+                        </div>
+                    </div>)) : <div>нет данных</div>}
+            </div>
         </div>
     );
 };

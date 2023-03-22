@@ -5,30 +5,21 @@ import App from "./App";
 import {getData, getInput} from "./ReduxToolkit/Selectors/AppSelector";
 import {getUser} from "./ReduxToolkit/Selectors/UserSelector";
 import {useEffect, useState} from "react";
-import {DefaultApi} from "./Api/Api";
-import {checkThunk, setAuth} from "./ReduxToolkit/Slice/UserSlice";
+
+import {checkAuthThunk, setAuth} from "./ReduxToolkit/Slice/UserSlice";
 import {useNavigate} from "react-router";
 import Loader from "./components/Loader";
 
 const AppContainer = (props) => {
-    const [load, setLoad] = useState(true);
+    const [Load, setLoad] = useState(true);
     const navigate = useNavigate()
     useEffect(() => {
-        async function check() {
-            await props.checkThunk()
-        }
-
-        check().finally(() => {
+        props.checkAuthThunk().finally(() => {
             setLoad(false)
-            navigate('/')
-        });
+        })
     }, [])
-
-    if (load) {
-        return <Loader/>
-    }
-
-    return (<App  {...props} />)
+    if (Load) return <Loader/>
+    return (<App {...props} />)
 }
 
 const mapStateToProps = (state) => {
@@ -39,8 +30,7 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(
-    mapStateToProps, {
-        changeInput, setAuth, checkThunk
+export default connect(mapStateToProps, {
+        changeInput, setAuth, checkAuthThunk
     }
 )(AppContainer);

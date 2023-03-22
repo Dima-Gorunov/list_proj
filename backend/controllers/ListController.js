@@ -2,21 +2,29 @@ const uuid = require('uuid')
 const path = require('path')
 const {User} = require("../models/models");
 const {List} = require('../models/models')
-
+const {File} = require('../models/models')
+const fs = require('fs')
+const {join} = require("path")
 
 class ListController {
 
     async create(req, res) {
-        const {text, userId} = req.body
-        if (!text || !userId) {
-            return res.status(400).json({result_code: 1, message: "request error (paste text, userId)"})
+        try {
+            const {text} = req.body  // formdata.append("text", "hello")
+            const {id} = req.user
+            const {postImgUrl, fileName, filePath} = req
+            if (!id) {
+                return res.status(400).json({result_code: 1, message: "request error (!userId)"})
+            }
+            const list = await List.create({text: text || null, userId: id, img: postImgUrl || null})
+            if (postImgUrl && fileName && fileName) {
+                const file = await File.create({name: fileName, type: "post", path: filePath, url: postImgUrl})
+                return res.json(list)
+            }
+            return res.json(list)
+        } catch (e) {
+            return res.status(403).json({result_code: 1, message: e.message})
         }
-        const obj = await List.findOne({where: {text, userId}})
-        if (obj) {
-            return res.status(400).json({result_code: 1, message: "list exist"})
-        }
-        const list = await List.create({text, userId})
-        return res.json(list)
     }
 
     async update(req, res) {
@@ -32,6 +40,17 @@ class ListController {
         if (!list) {
             return res.status(400).json({result_code: 1, message: "list not found"})
         }
+        if (list.img) {
+            const file = await File.findOne({where: {url: list.img}})
+            console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+            console.log(list.img)
+            console.log(file)
+            await File.destroy({where: {url: list.img}}).then(() => {
+                fs.unlink(join(file.path + "/" + file.name), (err) => {
+                    console.log(err);
+                })
+            })
+        }
         await List.destroy({where: {id: id}})
         return res.json(list)
     }
@@ -42,15 +61,19 @@ class ListController {
     }
 
     async getAll(req, res) {
-        const {userId} = req.query
-        if (!userId || userId === "null") {
-            return res.status(400).json({result_code: 1, message: "incorrect request (paste userId)"})
+        try {
+            const {id} = req.user
+            if (!id || id === "null") {
+                return res.status(400).json({result_code: 1, message: "incorrect request (!userId)"})
+            }
+            const lists = await List.findAll({where: {userId: id}})
+            if (!lists || lists.length === 0) {
+                return res.status(400).json({result_code: 1, message: "list not exist"})
+            }
+            return res.json(lists)
+        } catch (e) {
+            return res.status(500).json({result_code: 1, message: e.message})
         }
-        const lists = await List.findAll({where: {userId: req.query.userId}})
-        if (!lists || lists.length === 0) {
-            return res.status(400).json({result_code: 1, message: "list not exist"})
-        }
-        return res.json(lists)
     }
 
     async getOne(req, res) {

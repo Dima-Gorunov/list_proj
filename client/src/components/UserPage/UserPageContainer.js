@@ -4,6 +4,7 @@ import UserPage from "./UserPage";
 import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
 
 const UserPageContainer = (props) => {
+
     return <UserPage {...props}/>
 };
 const mapStateToProps = (state) => {

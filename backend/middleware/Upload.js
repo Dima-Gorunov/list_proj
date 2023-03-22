@@ -1,25 +1,36 @@
 const multer = require('multer')
-const moment = require('moment')
-const {mkdir} = require('fs/promises');
 const {join, resolve} = require('path')
-const {fileFolderPath} = require('../constant')
+const fs = require('fs')
+const {
+    fileFolderPath,
+    generateFileName,
+    serverName,
+    createAbsolutePath,
+    createFullUrl
+} = require('../constant')
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-        cb(null, fileFolderPath) // base dir===/backend
+        const {id} = req.user
+        if (!id) {
+            return res.status(400).json({result_code: 1, message: "insufficient data"})
+        }
+        const mimetypeImage = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']
+        const urlPath = `user_${id}/${mimetypeImage.some(e => e === file.mimetype) ? "images/" : "files/"}`
+        let absolutePath = createAbsolutePath(urlPath)
+
+        if (!fs.existsSync(absolutePath)) {
+            fs.mkdirSync(absolutePath, {recursive: true});
+        }
+        req.urlPath = urlPath
+        req.filePath = absolutePath
+        cb(null, absolutePath) // base dir===/backend
     },
     filename(req, file, cb) {
-        const mimetypeImage = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml']
-        const folders = ["images", "files"]
-
-        const date = moment().format('DDMMYYYY-HHmmss_SSS')
-        folders.forEach(async (e) => {
-            await mkdir(join(fileFolderPath, `user_${req.user.id}`, e), {recursive: true}).then(() => {
-                cb(null, `user_${req.user.id}/${mimetypeImage.some(e => e === file.mimetype) ? "images" : "files"}/${date}-${file.originalname}`)
-                // ПРИМЕР!!
-                // создание файла в папке files с названием user_id/images/07032023-141047_435.file_name.jpeg
-                // можно сказать полное название файла => часть пути => конечная точка
-            })
-        })
+        const fileName = generateFileName(file.originalname)
+        req.fileName = fileName
+        req.fullUrl = createFullUrl(req.urlPath, fileName)
+        req.fileUrl = join(req.filePath + "/" + fileName)
+        cb(null, fileName)
     }
 })
 
@@ -36,7 +47,7 @@ const limits = {
 }
 
 module.exports = multer({
-    storage, // storage: storage
+    storage // storage: storage
     //fileFilter, // fileFilter: fileFilter,
     //limits
 })

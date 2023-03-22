@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 import {LOGIN_ROUTE, REGISTRATION_ROUTE} from "../../Utils/const";
 import {useLocation, useNavigate} from "react-router";
-import {setAuthThunk, setUserError} from "../../ReduxToolkit/Slice/UserSlice";
+import {loginThunk} from "../../ReduxToolkit/Slice/UserSlice";
 
 const RegLogPage = (props) => {
     const [email, setEmail] = useState('')
@@ -13,49 +13,35 @@ const RegLogPage = (props) => {
     const click = async () => {
         try {
             if (isLoginRoute) {
-                let data = await props.setAuthThunk(email, password)
+                let data = await props.loginThunk(email, password)
             } else {
                 let data = await props.regThunk(email, password)
             }
             navigate('/')
         } catch (e) {
-            props.setUserError(e.response ? e.response.data.message : e.message)
+            console.log(e.message);
         }
     }
 
     return (
         <div>
-            {isLoginRoute ? <div>
+            <div className="dark_container p-3">
                 <div>
                     <div>
-                        авторизация
+                        {isLoginRoute ? "Авторизация" : "Регистрация"}
                     </div>
                     {props.UserError && <div style={{color: "red"}}>err:{props.UserError}</div>}
                     <input type="text" value={email} onChange={(e) => setEmail(e.currentTarget.value)}/>
                     <input type="text" value={password} onChange={(e) => setPassword(e.currentTarget.value)}/>
-                    <button onClick={click}>войти
+                    <button onClick={click}>{isLoginRoute ? "войти" : "зaрегистрироваться "}
                     </button>
-                </div>
-                <div>
-                    нет аккаунта
-                    <Link to={REGISTRATION_ROUTE}>зарегистрироваться</Link>
-                </div>
-            </div> : <div>
-                <div>
                     <div>
-                        регистрация
+                        {isLoginRoute ? "нет аккаунта?" : "есть аккаунт?"}
+                        <Link
+                            to={isLoginRoute ? REGISTRATION_ROUTE : LOGIN_ROUTE}>{isLoginRoute ? "зарегистрироваться" : "войти"}</Link>
                     </div>
-                    {props.UserError && <div style={{color: "red"}}>err:{props.UserError}</div>}
-                    <input type="text" value={email} onChange={(e) => setEmail(e.currentTarget.value)}/>
-                    <input type="text" value={password} onChange={(e) => setPassword(e.currentTarget.value)}/>
-                    <button onClick={click}>зарегистрироваться
-                    </button>
                 </div>
-                <div>
-                    есть аккаунт
-                    <Link to={LOGIN_ROUTE}>войти</Link>
-                </div>
-            </div>}
+            </div>
         </div>
     );
 };

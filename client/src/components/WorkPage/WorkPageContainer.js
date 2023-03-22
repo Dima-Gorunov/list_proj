@@ -5,27 +5,30 @@ import {
     addListThunk,
     changeInput,
     deleteListThunk,
-    getDataThunk, setFile,
-    uploadFileThunk
+    getDataThunk,
 } from "../../ReduxToolkit/Slice/AppSlice";
-import Loader from "../Loader";
+
 import {
     getData,
     getFile,
-    getFileFormActive,
+    getFileFormActive, getImage,
     getInput,
     getListError,
     getSuccess
 } from "../../ReduxToolkit/Selectors/AppSelector";
 import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
 import {Navigate} from "react-router-dom";
+import {ACTIVATE_ROUTE, LOGIN_ROUTE} from "../../Utils/const";
 
 const WorkPageContainer = (props) => {
     useEffect(() => {
-        props.User.isAuth && props.getDataThunk(props.User.id)
-    }, [props.User.isAuth])
-    if (!props.User.isAuth) {
-        return <Navigate to="/login"/>
+        props.getDataThunk()
+    }, [])
+    if (!props.User.IsAuth) {
+        return <Navigate to={LOGIN_ROUTE}/>
+    }
+    if (!props.User.Activated) {
+        return <Navigate to={ACTIVATE_ROUTE}/>
     }
     return <WorkPage {...props} />
 };
@@ -38,7 +41,8 @@ const mapStateToProps = (state) => {
         User: getUser(state),
         ListError: getListError(state),
         FileFormActive: getFileFormActive(state),
-        File:getFile(state)
+        File: getFile(state),
+        Image: getImage(state)
     }
 }
 
@@ -46,7 +50,5 @@ export default connect(mapStateToProps, {
     getDataThunk,
     deleteListThunk,
     changeInput,
-    setFile,
     addListThunk,
-    uploadFileThunk
 })(WorkPageContainer);

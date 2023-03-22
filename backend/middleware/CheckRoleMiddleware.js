@@ -8,7 +8,7 @@ module.exports = function (role) {
         try {
             const token = req.headers.authorization.split(' ')[1]   // цепляет токен из браузера
             if (!token) {
-                return res.status(401).json({result_code: 1, message: "no authorized (!token)"})
+                return res.status(401).json({result_code: 1, message: "no authorized (token)"})
             }
             const decoded = jwt.verify(token, "some_string") // example: => {id: 13} т.к кодируем только id
                                                                       // если функция не выполнится => исключение
@@ -19,7 +19,7 @@ module.exports = function (role) {
             req.sender = decoded
             next()
         } catch (e) { // если токен не валиднен, выполнится блок catch
-            return res.status(401).json({result_code: 1, message: "invalid token"})
+            return res.status(401).json({result_code: 1, message: "error token"})
         }
     }
 }
