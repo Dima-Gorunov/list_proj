@@ -1,5 +1,4 @@
 import {authInstance, instance} from "./AuthInstance"
-import jwtDecode from "jwt-decode";
 
 export const AuthApi = {
     registration(email, password) {
@@ -15,7 +14,7 @@ export const AuthApi = {
     },
 
     checkAuth() {
-        return instance.get('api/user/refresh')
+        return authInstance.get('api/user/refresh')
     },
 
     getInfo() {

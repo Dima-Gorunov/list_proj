@@ -6,7 +6,7 @@ const fileFolderPath = join(__dirname + "/../files/")
 // Database config
 const pgDatabase = process.env.PGDATABASE || "file_img"
 const pgUser = process.env.PGUSER || "postgres"
-const pgPassword = process.env.PGPASSWORD || "root"
+const pgPassword = process.env.PGPASSWORD || "2001ah2002"
 const dialect = process.env.DIALECT || "postgres"
 const host = process.env.PGHOST || "localhost"
 
