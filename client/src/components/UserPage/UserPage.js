@@ -33,7 +33,7 @@ const UserPage = (props) => {
                 <img src={props.User.Avatar}
                      style={{maxWidth: "150px", maxHeight: "200px"}} alt=""/>}
                 <label htmlFor="file">
-                    <input type="file" id="file" onChange={handleFileInputChange} hidden={true}/>
+                    <input type="file" accept=".jpeg, .jpg, .png" id="file" onChange={handleFileInputChange} hidden={true}/>
                     {previewUrl &&
                     <img src={previewUrl} style={{maxWidth: "150px", maxHeight: "200px"}} alt="Preview"/>}
                     {!previewUrl && <div style={{cursor:"pointer"}}>поменять аватар</div>}

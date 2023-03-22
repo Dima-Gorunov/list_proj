@@ -14,7 +14,7 @@ export const AuthApi = {
     },
 
     checkAuth() {
-        return authInstance.get('api/user/refresh')
+        return instance.get('api/user/refresh')
     },
 
     getInfo() {
