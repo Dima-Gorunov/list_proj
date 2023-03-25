@@ -34,10 +34,10 @@ const HomePage = (props) => {
                     </div>
                 </div>
             </div>
-            <div className="w-75 text-white m-auto">
+            <div className="w-75 text-white m-auto" style={{minHeight: "85vh"}}>
                 <Outlet/>
             </div>
-            <footer>
+            <footer className="dark_container p-2" >
                 ff
             </footer>
         </div>

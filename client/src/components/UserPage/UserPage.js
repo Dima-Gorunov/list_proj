@@ -28,10 +28,10 @@ const UserPage = (props) => {
 
     return (
         <div className="d-flex p-3 dark_container">
-            <div className="me-4 d-flex row">
+            <div className="me-4 d-flex row" style={{width: "150px", height: "200px"}}>
                 {!previewUrl &&
-                <img src={props.User.Avatar}
-                     style={{maxWidth: "150px", maxHeight: "200px"}} alt=""/>}
+                <img src={props.User.Avatar || "https://vsegda-pomnim.com/uploads/posts/2022-04/1649232769_58-vsegda-pomnim-com-p-pustoe-litso-foto-76.jpg"}
+                      alt=""/>}
                 <label htmlFor="file">
                     <input type="file" accept=".jpeg, .jpg, .png" id="file" onChange={handleFileInputChange} hidden={true}/>
                     {previewUrl &&

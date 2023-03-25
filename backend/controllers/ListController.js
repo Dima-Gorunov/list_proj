@@ -18,7 +18,14 @@ class ListController {
             }
             const list = await List.create({text: text || null, userId: id, img: postImgUrl || null})
             if (postImgUrl && fileName && fileName) {
-                const file = await File.create({name: fileName, type: "post", path: filePath, url: postImgUrl})
+                const file = await File.create({
+                    name: fileName,
+                    userId: id,
+                    listId: list.id,
+                    type: "post",
+                    path: filePath,
+                    url: postImgUrl
+                })
                 return res.json(list)
             }
             return res.json(list)
