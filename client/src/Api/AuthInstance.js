@@ -2,12 +2,12 @@ import axios from "axios";
 
 const instance = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:5000/"
+    baseURL: process.env.SERVER_NAME || "http://localhost:5000"
 })
 
 const authInstance = axios.create({
     withCredentials: true,
-    baseURL: "http://localhost:5000/"
+    baseURL: process.env.SERVER_NAME || "http://localhost:5000"
 })
 
 const authInterceptor = config => {
@@ -15,7 +15,6 @@ const authInterceptor = config => {
     console.log(config.headers.authorization);
     return config
 }
-
 
 authInstance.interceptors.request.use(authInterceptor)  // связывает authInstance и authInterceptor
 authInstance.interceptors.response.use((config) => {
@@ -25,7 +24,7 @@ authInstance.interceptors.response.use((config) => {
     if (error.response.status === 401 && error.config && !error.config._isRetry) {
         originalRequest._isRetry = true
         try {
-            const response = await instance.get('api/user/refresh', {withCredentials: true})
+            const response = await instance.get('/api/user/refresh', {withCredentials: true})
             localStorage.setItem('token', response.data.accessToken)
             return authInstance.request(originalRequest)
         } catch (e) {
