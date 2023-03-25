@@ -45,3 +45,5 @@ services:
       - CLIENT_NAME=
       - JWT_ACCESS_STRING=
       - JWT_REFRESH_STRING=
+    volumes:
+      - ./files:/usr/src/files
