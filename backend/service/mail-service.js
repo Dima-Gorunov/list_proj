@@ -1,23 +1,27 @@
 const nodemailer = require('nodemailer')
-const {serverName} = require("../constant")
+const {
+    serverName, smtpHost,
+    smtpPort,
+    smtpUser,
+    smtpPassword,
+} = require("../constant")
 
 class MailService {
     constructor() {
-            this.transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false,
-                auth: {
-                    user: "testconfirmemail8@gmail.com",
-                    pass: "oufitrwoeqllavdu"
-                    // "rmZn8WaTwQ9JFavgBaqk"
-                }
-            })
+        this.transporter = nodemailer.createTransport({
+            host: smtpHost,
+            port: smtpPort,
+            secure: false,
+            auth: {
+                user: smtpUser,
+                pass: smtpPassword
+            }
+        })
     }
 
     async sendActivationMail(to, link) {
         await this.transporter.sendMail({
-            from: "testconfirmemail8@gmail.com",
+            from: smtpUser,
             to: to,
             subject: `Активация аккаунта на ${serverName}`,
             text: ``,

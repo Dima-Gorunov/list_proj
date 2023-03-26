@@ -15,8 +15,13 @@ const serverName = process.env.SERVER_NAME || 'http://localhost:5000'
 const clientName = process.env.CLIENT_NAME || 'http://localhost:3000'
 const JWT_ACCESS_STRING = process.env.JWT_ACCESS_STRING || "some_string_access"
 const JWT_REFRESH_STRING = process.env.JWT_REFRESH_STRING || "some_string_refresh"
-
-//
+//-------------------------------------------------------------------------------
+//    SMTP data
+const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com"
+const smtpPort = process.env.SMTP_PORT || 587
+const smtpUser = process.env.SMTP_USER || "testconfirmemail8@gmail.com"
+const smtpPassword = process.env.SMTP_APP_PASSWORD || "oufitrwoeqllavdu"
+//-------------------------------------------------------------------------------
 const generateFileName = (originalName) => `${moment().format('DDMMYYYY-HHmmss-SSS')}_${originalName}`
 //
 const createAbsolutePath = (path) => join(fileFolderPath + "/" + path)
@@ -33,8 +38,13 @@ module.exports = {
     clientName,
     fileFolderPath,
     serverName,
+    smtpHost,
+    smtpPort,
+    smtpUser,
+    smtpPassword,
     JWT_ACCESS_STRING,
     JWT_REFRESH_STRING,
+    SMTP_APP_PASSWORD,
     createFullUrl,
     generateFileName,
     createAbsolutePath
