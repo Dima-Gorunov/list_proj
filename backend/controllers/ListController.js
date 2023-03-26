@@ -34,13 +34,6 @@ class ListController {
         }
     }
 
-    async update(req, res) {
-        const {id, newText} = req.body
-        const list = await List.update({text: newText},
-            {where: {id}})
-        return res.json(list)
-    }
-
     async deleteList(req, res) {
         const {id} = req.body
         const list = await List.findOne({where: {id: id}})
@@ -62,11 +55,6 @@ class ListController {
         return res.json(list)
     }
 
-    async getAllDev(req, res) {
-        const lists = await List.findAll()
-        return res.json(lists)
-    }
-
     async getAll(req, res) {
         try {
             const {id} = req.user
@@ -83,6 +71,16 @@ class ListController {
         }
     }
 
+    //----------------------------------------------------------------
+    // disabled
+    async updateList(req, res) {
+        const {id, newText} = req.body
+        const list = await List.update({text: newText},
+            {where: {id}})
+        return res.json(list)
+    }
+
+    // disabled
     async getOne(req, res) {
         const {text} = req.body
         const list = await List.findOne({where: {}})
@@ -90,6 +88,12 @@ class ListController {
             return res.json({result_code: 1, message: "does not exist"})
         }
         return res.json(list)
+    }
+
+    // disabled
+    async getAllDev(req, res) {
+        const lists = await List.findAll()
+        return res.json(lists)
     }
 
 }

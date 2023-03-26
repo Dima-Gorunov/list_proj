@@ -7,6 +7,7 @@ const UserDto = require('../dtos/userDto')
 const {serverName} = require('../constant')
 
 class UserService {
+
     async registration(email, password) {
         const candidate = await User.findOne({where: {email}}) // {email: email}
         if (candidate) {
@@ -65,7 +66,6 @@ class UserService {
             error.status = 401
             throw error
         }
-
         const userData = await tokenService.validateRefreshToken(refreshToken)
         const tokenFromDb = await tokenService.findToken(refreshToken)
         if (!userData || !tokenFromDb) {

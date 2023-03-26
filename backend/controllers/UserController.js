@@ -8,33 +8,8 @@ const userService = require('../service/user-service')
 const mailService = require('../service/mail-service')
 const {validationResult} = require('express-validator')
 const UserInfoDto = require('../dtos/userInfoDto')
-const uuid = require('uuid')
-const generateJwt = ({id, email, activated}) => {
-    return jwt.sign({id, email, activated},
-        JWT_ACCESS_STRING, //process.env.SECRET_KEY,
-        {
-            expiresIn: '24h'
-        })
-    // {
-    //     "id": 4,
-    //     "email": "gorunov-01",
-    //     "role": "USER",
-    //     "username": null,
-    //     "iat": 1678070188,
-    //     "exp": 1678156588
-    // }
-}
 
 class UserController {
-    async testMethod(req, res) {
-        try {
-            const {email} = req.body
-            await mailService.sendActivationMail("gorunov-01@mail.ru", "vk.com")
-            return res.json(1)
-        } catch (e) {
-            return res.json({result_code: 1, message: e.message})
-        }
-    }
 
     async testRegistration(req, res) {
         try {
@@ -51,44 +26,6 @@ class UserController {
         }
     }
 
-    async activate(req, res) {
-        try {
-            const {link} = req.params
-            await userService.activate(link)
-            return res.redirect(clientName)
-        } catch (e) {
-            return res.status(500).json({result_code: 1, message: e.message})
-        }
-    }
-
-    async registration(req, res) {
-        const {email, password} = req.body // must be string
-        if (!email || !password) {
-            return res.status(400).json({result_code: 1, message: "data no correct"})
-        }
-        const candidate = await User.findOne({where: {email}})
-        if (candidate) {
-            return res.status(400).json({result_code: 1, message: "the user exists"})
-        }
-        const salt = await bcrypt.genSalt(10)
-        const hashPassword = await bcrypt.hash(password, salt)
-        const user = await User.create({email, password: hashPassword})
-
-        //
-        // тут будет отправка ссылки на почту и логика проверки
-        //
-        // -------folder------
-        // const folders = ["images", "files"]
-        // folders.forEach(async (e) => {
-        //     await mkdir(join(fileFolderPath, `user_${user.id}`, e), {recursive: true});
-        // })
-        // РЕАЛИЗОВАЛ В MULTER ПРИ ПЕРВОЙ ЗАГРУЗКЕ ФАЙЛА..
-        // ТЕПЕРЬ ПОКА У ПОЛЬЗОВАТЕЛЯ НЕТ ФАЙЛОВ - ПАПКИ ТОЖЕ НЕТ
-        //--------------------
-        const token = generateJwt(user); //первая генерация токена при регистрации
-        return res.json({token: token})
-    }
-
     async testLogin(req, res) {
         try {
             const {email, password} = req.body
@@ -97,6 +34,16 @@ class UserController {
             return res.json(userData)
         } catch (e) {
             return res.status(e.status || 500).json({result_code: 1, message: e.message})
+        }
+    }
+
+    async activate(req, res) {
+        try {
+            const {link} = req.params
+            await userService.activate(link)
+            return res.redirect(clientName)
+        } catch (e) {
+            return res.status(500).json({result_code: 1, message: e.message})
         }
     }
 
@@ -119,38 +66,6 @@ class UserController {
             return res.json(userData)
         } catch (e) {
             return res.status(e.status || 500).json({result_code: 1, message: e.message})
-        }
-    }
-
-
-    async login(req, res) {    // функция авторизации
-        const {email, password} = req.body
-        if (!email || !password) {
-            return res.status(400).json({result_code: 1, message: "insufficient data"})
-        }
-        const user = await User.findOne({where: {email}})
-        if (!user) {
-            return res.status(400).json({result_code: 1, message: "incorrect email"})
-        }
-        const comparePassword = bcrypt.compareSync(password, user.password) // return boolean
-        if (!comparePassword) {
-            return res.status(400).json({result_code: 1, message: "incorrect password"})
-        }
-        const token = generateJwt(user) // генерируем токен с id, email, password пользователя
-        return res.json({
-            token: token
-        })
-    }
-
-    async check(req, res) {  // эта функция выполнится только если есть валидный токен
-        // const token = generateJwt(req.user) // генерируем новый токен после повторной авторизации только с id пользователя
-        try {
-            const {id} = req.user
-            const user = await User.findOne({where: {id}})
-            const newToken = generateJwt(user)
-            return res.json({token: newToken}) // jwt.verify(token, process.env.SECRET_KEY)=>{id:user.id...}
-        } catch (e) {
-            return res.status(401).json({result_code: 1, message: "generate new token error"})
         }
     }
 
@@ -181,6 +96,43 @@ class UserController {
         }
     }
 
+
+
+    //------------------------------------------------------------
+
+    // disabled
+    generateJwt({id, email, activated}) {
+        return jwt.sign({id, email, activated},
+            JWT_ACCESS_STRING, //process.env.SECRET_KEY,
+            {
+                expiresIn: '24h'
+            })
+    }
+
+    // disabled
+    async testMethod(req, res) {
+        try {
+            const {email} = req.body
+            await mailService.sendActivationMail("gorunov-01@mail.ru", "vk.com")
+            return res.json(1)
+        } catch (e) {
+            return res.json({result_code: 1, message: e.message})
+        }
+    }
+
+    // disabled
+    async check(req, res) {
+        try {
+            const {id} = req.user
+            const user = await User.findOne({where: {id}})
+            const newToken = this.generateJwt(user)
+            return res.json({token: newToken}) // jwt.verify(token, process.env.SECRET_KEY)=>{id:user.id...}
+        } catch (e) {
+            return res.status(401).json({result_code: 1, message: "generate new token error"})
+        }
+    }
+
+    // disabled
     async getAvatar(req, res) {
         try {
             const {id} = req.user
@@ -191,6 +143,7 @@ class UserController {
         }
     }
 
+    // disabled
     async getAll(req, res) {
         const {id, count, page} = req.query
         if (id) {
@@ -216,6 +169,7 @@ class UserController {
         return res.json({users})
     }
 
+    // disabled
     async getOne(req, res) {
         const user = await User.findOne({where: {id: req.id}})
         if (!user) {
@@ -224,6 +178,7 @@ class UserController {
         return res.json(user)
     }
 
+    // disabled
     async deleteUser(req, res) {
         const {id} = req.body
         const senId = req.sender.id
@@ -238,6 +193,7 @@ class UserController {
         return res.json(user)
     }
 
+    // disabled
     async updateUser(req, res) {
         const {id, username} = req.body
         await User.update({username: username}, {where: {id}})
@@ -245,6 +201,7 @@ class UserController {
         return res.json(users)
     }
 
+    // disabled
     async setRole(req, res) {
         const {id, role} = req.body
         const user = await User.findOne({where: {id}})
@@ -258,6 +215,44 @@ class UserController {
         const updateUser = await User.findOne({where: {id}})
         return res.json({user, updateUser})
     }
+
+    // disabled
+    async registration(req, res) {
+        const {email, password} = req.body // must be string
+        if (!email || !password) {
+            return res.status(400).json({result_code: 1, message: "data no correct"})
+        }
+        const candidate = await User.findOne({where: {email}})
+        if (candidate) {
+            return res.status(400).json({result_code: 1, message: "the user exists"})
+        }
+        const salt = await bcrypt.genSalt(10)
+        const hashPassword = await bcrypt.hash(password, salt)
+        const user = await User.create({email, password: hashPassword})
+        const token = this.generateJwt(user); //первая генерация токена при регистрации
+        return res.json({token: token})
+    }
+
+    // disabled
+    async login(req, res) {    // функция авторизации
+        const {email, password} = req.body
+        if (!email || !password) {
+            return res.status(400).json({result_code: 1, message: "insufficient data"})
+        }
+        const user = await User.findOne({where: {email}})
+        if (!user) {
+            return res.status(400).json({result_code: 1, message: "incorrect email"})
+        }
+        const comparePassword = bcrypt.compareSync(password, user.password) // return boolean
+        if (!comparePassword) {
+            return res.status(400).json({result_code: 1, message: "incorrect password"})
+        }
+        const token = this.generateJwt(user) // генерируем токен с id, email, password пользователя
+        return res.json({
+            token: token
+        })
+    }
+
 }
 
 module.exports = new UserController()

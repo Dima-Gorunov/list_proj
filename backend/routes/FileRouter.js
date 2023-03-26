@@ -4,10 +4,14 @@ const fileController = require('../controllers/FilesController')
 const upload = require('../middleware/Upload')
 const authMiddleware = require('../middleware/AuthMiddleware')
 
+
+// no realised on frontend
 router.post('/upload', authMiddleware, upload.fields([{name: 'file'}]), fileController.upload)
 router.get('/', fileController.getFile)
-router.put('/update', fileController.update)
 router.delete('/delete', fileController.delete)
 
+
+// disabled
+// router.put('/update', fileController.updateFile)
 
 module.exports = router

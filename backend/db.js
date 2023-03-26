@@ -8,11 +8,11 @@ const {
 } = require('./constant')
 
 module.exports = new Sequelize(
-    pgDatabase || "your_variant",
-    pgUser || "postgres",
-    pgPassword || "your_password",
+    pgDatabase,
+    pgUser,
+    pgPassword,
     {
-        dialect: dialect || "postgres",
-        host: host || "localhost"    //localhost || docker container name
+        dialect: dialect,
+        host: host     // localhost, docker container name...
     }
 )

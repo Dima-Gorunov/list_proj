@@ -34,7 +34,7 @@ class FilesController {
         }
     }
 
-    async update(req, res) {
+    async updateFile(req, res) {
         const searchString = '\\\\'
         const replaceString = "/"
         await File.update(

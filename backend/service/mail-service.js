@@ -7,6 +7,7 @@ const {
 } = require("../constant")
 
 class MailService {
+
     constructor() {
         this.transporter = nodemailer.createTransport({
             host: smtpHost,

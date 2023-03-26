@@ -16,11 +16,10 @@ app.use(cors(
 ))
 app.use(express.json())
 app.use(cookieParser())
-app.use('/api', router)                                      // 1. IMPORTANT
-app.use('/', express.static(fileFolderPath)) // 2. IMPORTANT
+app.use('/api', router)
+app.use('/', express.static(fileFolderPath))
 
 app.use(function (err, req, res, next) {
-    // Обработка ошибок
     return res.status(err.status || 500).json({status_code: 1, message: err.message});
 });
 
@@ -29,7 +28,7 @@ const start = async () => {
         for (key in models) {
             await models[key].sync({alter: true})
         }
-        await sequelize.authenticate() // {force:true}
+        await sequelize.authenticate() // if {force:true} => all data=0
         await sequelize.sync()
         app.listen(PORT, () => console.log(`start on ${PORT} port`)
         )
