@@ -4,7 +4,6 @@ const defaultPath = __dirname
 const fileFolderPath = join(__dirname + "/../files/")
 
 
-
 const serverName = process.env.SERVER_NAME || 'http://localhost:5000'
 const clientName = process.env.CLIENT_NAME || 'http://localhost:3000'
 const JWT_ACCESS_STRING = process.env.JWT_ACCESS_STRING || "some_string_access"
@@ -44,7 +43,6 @@ module.exports = {
     smtpPassword,
     JWT_ACCESS_STRING,
     JWT_REFRESH_STRING,
-    SMTP_APP_PASSWORD,
     createFullUrl,
     generateFileName,
     createAbsolutePath
