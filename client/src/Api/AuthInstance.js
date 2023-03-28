@@ -1,14 +1,14 @@
 import axios from "axios";
-import {serverName} from "../../constant";
+import {serverName} from "../constant";
 
 const instance = axios.create({
     withCredentials: true,
-    baseURL: serverName || "http://localhost:5000"
+    baseURL: serverName
 })
 
 const authInstance = axios.create({
     withCredentials: true,
-    baseURL: serverName || "http://localhost:5000"
+    baseURL: serverName
 })
 
 const authInterceptor = config => {
