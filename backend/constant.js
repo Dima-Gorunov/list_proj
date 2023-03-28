@@ -13,15 +13,15 @@ const JWT_REFRESH_STRING = process.env.JWT_REFRESH_STRING || "some_string_refres
 //   Database config
 const pgDatabase = process.env.PGDATABASE || "file_img"
 const pgUser = process.env.PGUSER || "postgres"
-const pgPassword = process.env.PGPASSWORD || "2001ah2002"
+const pgPassword = process.env.PGPASSWORD || "password"
 const dialect = process.env.DIALECT || "postgres"
 const host = process.env.PGHOST || "localhost"
 //-------------------------------------------------------------------------------
 //   SMTP config
 const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com"
 const smtpPort = process.env.SMTP_PORT || 587
-const smtpUser = process.env.SMTP_USER || "testconfirmemail8@gmail.com"
-const smtpPassword = process.env.SMTP_APP_PASSWORD || "oufitrwoeqllavdu"
+const smtpUser = process.env.SMTP_USER || "your@gmail.com"
+const smtpPassword = process.env.SMTP_APP_PASSWORD || "app_password"
 //-------------------------------------------------------------------------------
 const generateFileName = (originalName) => `${moment().format('DDMMYYYY-HHmmss-SSS')}_${originalName}`
 const createAbsolutePath = (path) => join(fileFolderPath + "/" + path)
