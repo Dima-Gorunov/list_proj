@@ -8,7 +8,6 @@ const WorkPage = (props) => {
     const [Drag, setDrag] = useState(false)
     const change = (e) => {
         e.preventDefault()
-        console.log(e.currentTarget.value)
         props.changeInput(e.currentTarget.value)
     }
 
@@ -99,7 +98,6 @@ const WorkPage = (props) => {
                         </div>
                     </div>
                 </form>
-
             </div>
             <div>
                 {props.Data ? props.Data.map((e, index) => (
