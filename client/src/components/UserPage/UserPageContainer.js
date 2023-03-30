@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import UserPage from "./UserPage";
-import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
+import {getUser, getUserError} from "../../ReduxToolkit/Selectors/UserSelector";
 import {compose} from "redux";
 import WithPreloader from "../../Hoс/WithPreloader";
 import {setAvatarThunk} from "../../ReduxToolkit/Slice/UserSlice";
@@ -12,7 +12,8 @@ const UserPageContainer = (props) => {
 };
 const mapStateToProps = (state) => {
     return {
-        User: getUser(state)
+        User: getUser(state),
+        UserError: getUserError(state)
     }
 }
 

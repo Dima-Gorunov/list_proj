@@ -62,6 +62,9 @@ const UserPage = (props) => {
                         </div>
                     </div>}
                 </div>
+                {props.UserError && <div className="text-danger">
+                    {props.UserError}
+                </div>}
             </div>
             <div className="">
                 <div>

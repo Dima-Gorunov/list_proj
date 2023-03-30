@@ -119,6 +119,7 @@ export const checkAuthThunk = () => {
 export const setAvatarThunk = (formData) => {
     return async (dispatch) => {
         try {
+            dispatch(setUserError(""))
             dispatch(setLoad(true))
             const response = await AuthApi.setAvatar(formData)
             dispatch(setAvatar(response.data.avatarUrl))
@@ -126,6 +127,7 @@ export const setAvatarThunk = (formData) => {
         } catch (e) {
             dispatch(setLoad(false))
             console.log(e.response?.data?.message);
+            dispatch(setUserError(e.response?.data?.message))
         }
     }
 }

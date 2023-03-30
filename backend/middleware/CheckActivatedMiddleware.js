@@ -4,7 +4,7 @@ module.exports = async function (req, res, next) {
             next()
         }
         if (!req.user.activated) {
-            return res.status(401).json({result_code: 1, message: "user is no activated"})
+            return res.status(401).json({result_code: 1, message: "user is no activated. Confirm your email"})
         }
         next()
     } catch (e) {

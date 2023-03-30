@@ -37,7 +37,6 @@ const generateFileName = (originalName) => `${moment().format('DDMMYYYY-HHmmss-S
 const createAbsolutePath = (path) => join(fileFolderPath + "/" + path)
 // for static images || files
 const createFullUrl = (urlPath, fileName) => serverName + "/" + urlPath + fileName
-
 module.exports = {
     pgDatabase,
     pgUser,
