@@ -1,26 +1,37 @@
+const {
+    clientNameDev, dialectDev, hostDev,
+    JWT_ACCESS_STRING_DEV,
+    JWT_REFRESH_STRING_DEV,
+    pgDatabaseDev, pgPasswordDev, pgUserDev,
+    serverNameDev, smtpHostDev, smtpPasswordDev, smtpPortDev, smtpUserDev
+} = require("./constantDev");
+
 const {join} = require('path')
 const moment = require('moment')
+
+//-------------------------------------------------------------------------------
+//   Path
 const defaultPath = __dirname
 const fileFolderPath = join(__dirname + "/../files/")
-
-
-const serverName = process.env.SERVER_NAME || 'http://localhost:5000'
-const clientName = process.env.CLIENT_NAME || 'http://localhost:3000'
-const JWT_ACCESS_STRING = process.env.JWT_ACCESS_STRING || "some_string_access"
-const JWT_REFRESH_STRING = process.env.JWT_REFRESH_STRING || "some_string_refresh"
+//-------------------------------------------------------------------------------
+//   Server data
+const serverName = process.env.SERVER_NAME || serverNameDev
+const clientName = process.env.CLIENT_NAME || clientNameDev
+const JWT_ACCESS_STRING = process.env.JWT_ACCESS_STRING || JWT_ACCESS_STRING_DEV
+const JWT_REFRESH_STRING = process.env.JWT_REFRESH_STRING || JWT_REFRESH_STRING_DEV
 //-------------------------------------------------------------------------------
 //   Database config
-const pgDatabase = process.env.PGDATABASE || "file_img"
-const pgUser = process.env.PGUSER || "postgres"
-const pgPassword = process.env.PGPASSWORD || "2001ah2002"
-const dialect = process.env.DIALECT || "postgres"
-const host = process.env.PGHOST || "localhost"
+const pgDatabase = process.env.PGDATABASE || pgDatabaseDev
+const pgUser = process.env.PGUSER || pgUserDev
+const pgPassword = process.env.PGPASSWORD || pgPasswordDev
+const dialect = process.env.DIALECT || dialectDev
+const host = process.env.PGHOST || hostDev
 //-------------------------------------------------------------------------------
 //   SMTP config
-const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com"
-const smtpPort = process.env.SMTP_PORT || 587
-const smtpUser = process.env.SMTP_USER || "testconfirmemail8@gmail.com"
-const smtpPassword = process.env.SMTP_APP_PASSWORD || "oufitrwoeqllavdu"
+const smtpHost = process.env.SMTP_HOST || smtpHostDev
+const smtpPort = parseInt(process.env.SMTP_PORT || smtpPortDev)
+const smtpUser = process.env.SMTP_USER || smtpUserDev
+const smtpPassword = process.env.SMTP_APP_PASSWORD || smtpPasswordDev
 //-------------------------------------------------------------------------------
 const generateFileName = (originalName) => `${moment().format('DDMMYYYY-HHmmss-SSS')}_${originalName}`
 const createAbsolutePath = (path) => join(fileFolderPath + "/" + path)

@@ -10,10 +10,11 @@ const UserSlice = createSlice({
             Username: null,
             Role: null,
             IsAuth: false,
-            Activate: false,
+            Activated: false,
             IsAdmin: false,
             Avatar: null
         },
+        Load: false,
         UserError: ""
     },
     reducers: {
@@ -25,6 +26,9 @@ const UserSlice = createSlice({
             state.User.IsAdmin = payload?.role === "ADMIN" || false
             state.User.Activated = payload?.activated || false
             state.User.Avatar = payload?.avatar || null
+            state.User.FirstName = payload?.first_name || null
+            state.User.LastName = payload?.last_name || null
+            state.User.Gender = payload?.gender || null
         },
         setAuth(state, {payload}) {
             state.User.IsAuth = payload
@@ -34,6 +38,9 @@ const UserSlice = createSlice({
         },
         setUserError(state, {payload}) {
             state.UserError = payload
+        },
+        setLoad(state, {payload}) {
+            state.Load = payload
         }
     }
 })
@@ -41,15 +48,18 @@ const UserSlice = createSlice({
 export const regThunk = (email, password) => {
     return async (dispatch) => {
         try {
+            dispatch(setLoad(true))
             const response = await AuthApi.registration(email, password)
             console.log(response);
             localStorage.setItem('token', response.data.accessToken)
             dispatch(setAuth(true))
-            const userInfo = await AuthApi.getInfo()
+            const userInfo = await AuthApi.getMyInfo()
             dispatch(setUser(userInfo.data.user))
+            dispatch(setLoad(false))
         } catch (e) {
             console.log(e.response?.data?.message);
             dispatch(setUserError(e.response?.data?.message || "Error"))
+            dispatch(setLoad(false))
         }
     }
 }
@@ -57,15 +67,18 @@ export const regThunk = (email, password) => {
 export const loginThunk = (email, password) => {
     return async (dispatch) => {
         try {
+            dispatch(setLoad(true))
             const response = await AuthApi.login(email, password)
             console.log(response);
             localStorage.setItem('token', response.data.accessToken)
             dispatch(setAuth(true))
-            const userInfo = await AuthApi.getInfo()
+            const userInfo = await AuthApi.getMyInfo()
             dispatch(setUser(userInfo.data.user))
+            dispatch(setLoad(false))
         } catch (e) {
             console.log(e.response?.data?.message);
             dispatch(setUserError(e.response?.data?.message || "Error"))
+            dispatch(setLoad(false))
         }
     }
 }
@@ -73,12 +86,15 @@ export const loginThunk = (email, password) => {
 export const logOutThunk = () => {
     return async (dispatch) => {
         try {
+            dispatch(setLoad(true))
             const response = await AuthApi.logout()  // backend refreshToken=>null
             localStorage.removeItem('token')
             dispatch(setAuth(null))
             dispatch(setUser(null))
+            dispatch(setLoad(false))
         } catch (e) {
             console.log(e.response?.data?.message);
+            dispatch(setLoad(false))
         }
     }
 }
@@ -90,7 +106,7 @@ export const checkAuthThunk = () => {
             console.log(response);
             localStorage.setItem('token', response.data.accessToken)
             dispatch(setAuth(true))
-            const userInfo = await AuthApi.getInfo()
+            const userInfo = await AuthApi.getMyInfo()
             dispatch(setUser(userInfo.data.user))
         } catch (e) {
             console.log(e.response?.data?.message);
@@ -100,10 +116,25 @@ export const checkAuthThunk = () => {
     }
 }
 
+export const setAvatarThunk = (formData) => {
+    return async (dispatch) => {
+        try {
+            dispatch(setLoad(true))
+            const response = await AuthApi.setAvatar(formData)
+            dispatch(setAvatar(response.data.avatarUrl))
+            dispatch(setLoad(false))
+        } catch (e) {
+            dispatch(setLoad(false))
+            console.log(e.response?.data?.message);
+        }
+    }
+}
 export default UserSlice.reducer
 
 export const {
     setUser,
     setUserError,
-    setAuth
+    setAuth,
+    setLoad,
+    setAvatar
 } = UserSlice.actions

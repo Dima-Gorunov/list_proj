@@ -3,7 +3,6 @@ const {JWT_ACCESS_STRING} = require('../constant')
 const tokenService = require('../service/token-service')
 module.exports = async function (req, res, next) { // функция, проверяющая токен пользователя
     try {
-        console.log(req.method);
         if (req.method === 'OPTIONS') {
             next()
         }

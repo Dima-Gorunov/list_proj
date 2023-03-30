@@ -5,6 +5,7 @@ const {List} = require('../models/models')
 const {File} = require('../models/models')
 const fs = require('fs')
 const {join} = require("path")
+const UserInfoDto = require('../dtos/userInfoDto')
 
 class ListController {
 
@@ -55,17 +56,44 @@ class ListController {
         return res.json(list)
     }
 
-    async getAll(req, res) {
+    async getAllMy(req, res) {
         try {
-            const {id} = req.user
-            if (!id || id === "null") {
+            const senderId = req.user.id // sender
+            if (!senderId || senderId === "null") {
                 return res.status(400).json({result_code: 1, message: "incorrect request (!userId)"})
             }
-            const lists = await List.findAll({where: {userId: id}})
+            const lists = await List.findAll({where: {userId: senderId}})
             if (!lists || lists.length === 0) {
                 return res.status(400).json({result_code: 1, message: "list not exist"})
             }
             return res.json(lists)
+        } catch (e) {
+            return res.status(500).json({result_code: 1, message: e.message})
+        }
+    }
+
+    async getAll(req, res) {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const perPage = parseInt(req.query.perPage) || 10;
+            const offset = (page - 1) * perPage;
+            const limit = perPage;
+            const lists = await List.findAll({
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
+            if (!lists) {
+                return res.status(400).json({result_code: 1, message: "list not exist"})
+            }
+            const usersId = lists.map(e => e.userId).filter((item, index, arr) => arr.indexOf(item) === index)
+            let users = await User.findAll({where: {id: usersId}})
+            users = users.map(e => new UserInfoDto(e))
+            let posts = lists.map(list => {
+                const user = users.find(e=>e.id===list.userId)
+                return {list, user}
+            })
+            return res.json(posts)
         } catch (e) {
             return res.status(500).json({result_code: 1, message: e.message})
         }

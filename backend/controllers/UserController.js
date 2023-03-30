@@ -71,8 +71,20 @@ class UserController {
 
     async getInfo(req, res) {
         try {
-            const {id} = req.user
-            const user = await User.findOne({where: {id}})
+            const senderId = req.user.id //sender
+            const {id} = req.body
+            const {usersId} = req.body   // if array<id>
+            if (id) {
+                const user = await User.findOne({where: {id}})
+                const userInfoDto = new UserInfoDto(user)
+                return res.json({user: userInfoDto})
+            }
+            if (usersId) {
+                const users = await User.findAll({where: {id: usersId}})
+                const usersInfoDto = users.map((e, index) => (new UserInfoDto(e)))
+                return res.json({users: usersInfoDto})
+            }
+            const user = await User.findOne({where: {id: senderId}})
             const userInfoDto = new UserInfoDto(user)
             return res.json({user: userInfoDto})
         } catch (e) {
@@ -90,12 +102,11 @@ class UserController {
             await User.update({avatar: avatarUrl}, {where: {id}})
             const user = await User.findOne({where: {id}})
             const file = await File.create({name: fileName, type: "avatar", path: filePath, userId: id, url: avatarUrl})
-            return res.json({file, user})
+            return res.json({avatarUrl: file.url})
         } catch (e) {
             return res.status(401).json({result_code: 1, message: e.message})
         }
     }
-
 
 
     //------------------------------------------------------------

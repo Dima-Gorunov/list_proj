@@ -31,8 +31,8 @@ const RegLogPage = (props) => {
                         {isLoginRoute ? "Авторизация" : "Регистрация"}
                     </div>
                     {props.UserError && <div style={{color: "red"}}>err:{props.UserError}</div>}
-                    <input type="text" value={email} onChange={(e) => setEmail(e.currentTarget.value)}/>
-                    <input type="text" value={password} onChange={(e) => setPassword(e.currentTarget.value)}/>
+                    <input type="email" value={email} onChange={(e) => setEmail(e.currentTarget.value)}/>
+                    <input type="password" value={password} onChange={(e) => setPassword(e.currentTarget.value)}/>
                     <button onClick={click}>{isLoginRoute ? "войти" : "зaрегистрироваться "}
                     </button>
                     <div>

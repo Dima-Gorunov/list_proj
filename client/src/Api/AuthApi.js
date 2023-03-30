@@ -17,8 +17,12 @@ export const AuthApi = {
         return instance.get('/api/user/refresh')
     },
 
-    getInfo() {
+    getMyInfo() {
         return authInstance.get('/api/user/info')
+    },
+
+    getUsersInfo(usersId) {
+        return authInstance.get('/api/user/info', {data: {usersId}})
     },
 
     setAvatar(formData) {

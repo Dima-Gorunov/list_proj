@@ -1,6 +1,5 @@
 import './App.css';
 import {connect} from "react-redux";
-import {changeInput} from "./ReduxToolkit/Slice/AppSlice";
 import App from "./App";
 import {getData, getInput} from "./ReduxToolkit/Selectors/AppSelector";
 import {getUser} from "./ReduxToolkit/Selectors/UserSelector";
@@ -24,13 +23,11 @@ const AppContainer = (props) => {
 
 const mapStateToProps = (state) => {
     return {
-        Input: getInput(state),
-        Data: getData(state),
         User: getUser(state)
     }
 }
 
 export default connect(mapStateToProps, {
-        changeInput, setAuth, checkAuthThunk
+        setAuth, checkAuthThunk
     }
 )(AppContainer);

@@ -24,7 +24,7 @@ class TokenService {
     }
 
     async generateTokens(payload) {
-        const accessToken = jwt.sign(payload, JWT_ACCESS_STRING, {expiresIn: '30m'})
+        const accessToken = jwt.sign(payload, JWT_ACCESS_STRING, {expiresIn: '24h'})
         const refreshToken = jwt.sign(payload, JWT_REFRESH_STRING, {expiresIn: '30d'})
         return {
             accessToken,

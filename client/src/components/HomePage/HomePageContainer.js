@@ -1,11 +1,9 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import HomePage from "./HomePage";
 import {connect} from "react-redux";
-import {getDataThunk} from "../../ReduxToolkit/Slice/AppSlice";
 import {getSuccess} from "../../ReduxToolkit/Selectors/AppSelector";
 import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
-import {logOutThunk, setAuth} from "../../ReduxToolkit/Slice/UserSlice";
-import {useNavigate} from "react-router";
+import {logOutThunk} from "../../ReduxToolkit/Slice/UserSlice";
 
 const HomePageContainer = (props) => {
     return <HomePage {...props} />
@@ -19,7 +17,5 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-    getDataThunk,
-    setAuth,
     logOutThunk
 })(HomePageContainer);

@@ -20,3 +20,9 @@
     border-radius: 5px;
     border: 2px solid var(--border-color)
 }
+
+@media (max-width: 767px) {
+    .drag-and-drop{
+        display: none;
+    }
+}

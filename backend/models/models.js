@@ -32,7 +32,6 @@ const File = sequelize.define('file', {
     type: {type: DataTypes.STRING},
     path: {type: DataTypes.STRING},
     url: {type: DataTypes.STRING}
-
 })
 
 User.hasMany(List)

@@ -3,6 +3,7 @@ const router = new Router()
 const userController = require('../controllers/UserController')
 const authMiddleware = require('../middleware/AuthMiddleware')
 const checkRoleMiddleware = require('../middleware/CheckRoleMiddleware')
+const checkActivatedMiddleware = require('../middleware/CheckActivatedMiddleware')
 const avatarStorage = require("../middleware/filemiddleware/avatarStorage")
 const {body} = require("express-validator")
 
@@ -16,7 +17,7 @@ router.post('/login', userController.testLogin)
 router.post('/logout', userController.testLogout)
 router.get('/refresh', userController.refresh)  // выцепляем refreshToken из cookies каждый раз
 router.get('/info', authMiddleware, userController.getInfo)
-router.put('/setAvatar', authMiddleware, avatarStorage.fields([{name: 'file'}]), userController.setAvatar)
+router.put('/setAvatar', authMiddleware, checkActivatedMiddleware, avatarStorage.fields([{name: 'file'}]), userController.setAvatar)
 
 
 // disabled

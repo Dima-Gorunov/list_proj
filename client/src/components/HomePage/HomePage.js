@@ -4,10 +4,9 @@ import {useLocation} from "react-router";
 import {LOGIN_ROUTE} from "../../Utils/const";
 import CustomLink from "../CustomElements/CustomLink";
 import CustomButton from "../CustomElements/CustomButton";
-import {logOutThunk} from "../../ReduxToolkit/Slice/UserSlice";
 
 const HomePage = (props) => {
-    const setAuthLocal = () => {
+    const logout = () => {
         props.logOutThunk()
     }
 
@@ -21,13 +20,14 @@ const HomePage = (props) => {
                             <CustomLink to={`/user/${props.User.Id}`} className="me-4" type="button">Мой
                                 профиль</CustomLink>
                             <CustomLink to="/" className="me-2" type="button">Мои посты</CustomLink>
+                            <CustomLink to="/feed" className="me-2" type="button">Все посты</CustomLink>
                         </div>}
                         {props.User.IsAdmin && <Link to="/admin" type="button"
                                                      className="">Админ панель</Link>}
                     </div>
                     <div>
                         {props.User.IsAuth ? <CustomButton type="button"
-                                                           onClick={setAuthLocal}>Выйти</CustomButton> :
+                                                           onClick={logout}>Выйти</CustomButton> :
                             <CustomLink to={LOGIN_ROUTE} type="button"
                                         className="">Войти/Зарегистрироваться</CustomLink>
                         }
@@ -37,7 +37,7 @@ const HomePage = (props) => {
             <div className="w-75 text-white m-auto" style={{minHeight: "85vh"}}>
                 <Outlet/>
             </div>
-            <footer className="dark_container p-2" >
+            <footer className="dark_container p-2">
                 ff
             </footer>
         </div>

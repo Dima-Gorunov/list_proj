@@ -28,8 +28,8 @@ const start = async () => {
         for (key in models) {
             await models[key].sync({alter: true})
         }
-        await sequelize.authenticate({force:true}) // if {force:true} => all data=0
-        await sequelize.sync({force:true})
+        await sequelize.authenticate() // if {force:true} => all data=0
+        await sequelize.sync()
         app.listen(PORT, () => console.log(`start on ${PORT} port`)
         )
     } catch (e) {

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {AuthApi} from "../../Api/AuthApi";
+import AvatarDefaultImg from "../../Svg/AvatarDefault.jpg"
+import CustomButton from "../CustomElements/CustomButton";
 
 const UserPage = (props) => {
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -20,41 +21,71 @@ const UserPage = (props) => {
         }
         const formData = new FormData()
         formData.append("file", selectedFile)
-        await AuthApi.setAvatar(formData).then(response => {
-            console.log(response);
-        })
+        props.setAvatarThunk(formData)
         console.log("save")
     }
 
     return (
-        <div className="d-flex p-3 dark_container">
-            <div className="me-4 d-flex row" style={{width: "150px", height: "200px"}}>
+        <div className="d-flex p-4 dark_container">
+            <div className="d-flex justify-content-center row me-4" style={{width: "200px"}}>
                 {!previewUrl &&
-                <img src={props.User.Avatar || "https://vsegda-pomnim.com/uploads/posts/2022-04/1649232769_58-vsegda-pomnim-com-p-pustoe-litso-foto-76.jpg"}
-                      alt=""/>}
-                <label htmlFor="file">
-                    <input type="file" accept=".jpeg, .jpg, .png" id="file" onChange={handleFileInputChange} hidden={true}/>
+                <div className="text-center mb-3">
+                    <img style={{width: "150px", height: "200px", objectFit: "cover"}}
+                         src={props.User.Avatar || AvatarDefaultImg}
+                         alt=""/>
+                </div>
+                }
+                <label className="text-center" htmlFor="file">
+                    <input type="file" accept=".jpeg, .jpg, .png" id="file" onChange={handleFileInputChange}
+                           hidden={true}/>
                     {previewUrl &&
-                    <img src={previewUrl} style={{maxWidth: "150px", maxHeight: "200px"}} alt="Preview"/>}
-                    {!previewUrl && <div style={{cursor:"pointer"}}>поменять аватар</div>}
+                    <img src={previewUrl} style={{width: "150px", height: "200px", objectFit: "cover"}} alt="Preview"/>}
+                    {!previewUrl && <div style={{
+                        minHeight: "5px",
+                        minWidth: "35px",
+                        backgroundColor: "var(--background-primary-color)",
+                        color: "white",
+                        padding: "4px",
+                        borderRadius: "5px",
+                        border: "1px solid white",
+                        cursor: "pointer"
+                    }}>поменять аватар</div>}
                 </label>
-                <div style={{width: "35px"}}>
-                    {previewUrl && <div>
-                        Сохранить?
-                        <button onClick={() => saveAvatar(true)}>да</button>
-                        <button onClick={() => saveAvatar(false)}>нет</button>
+                <div>
+                    {previewUrl && <div className="d-flex row">
+                        <div className="text-center">
+                            Сохранить?
+                        </div>
+                        <div className="d-flex justify-content-around">
+                            <CustomButton onClick={() => saveAvatar(true)}>да</CustomButton>
+                            <CustomButton onClick={() => saveAvatar(false)}>нет</CustomButton>
+                        </div>
                     </div>}
                 </div>
             </div>
-            <div className="d-flex row">
+            <div className="">
                 <div>
-                    Email: {props.User.Email}
+                    Information
                 </div>
                 <div>
-                    Role: {props.User.Role}
-                </div>
-                <div>
-                    Name: {props.User.Username || "noname"}
+                    <div>
+                        Email: {props.User.Email}
+                    </div>
+                    <div>
+                        Role: {props.User.Role}
+                    </div>
+                    <div>
+                        Name: {props.User.Username || "noname"}
+                    </div>
+                    <div>
+                        first_name: {props.User.first_name}
+                    </div>
+                    <div>
+                        last_name: {props.User.last_name}
+                    </div>
+                    <div>
+                        gender: {props.User.gender}
+                    </div>
                 </div>
             </div>
         </div>

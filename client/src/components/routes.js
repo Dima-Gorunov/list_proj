@@ -1,11 +1,11 @@
-import {ADMIN_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE, ACTIVATE_ROUTE} from "../Utils/const";
+import {ADMIN_ROUTE, LOGIN_ROUTE, REGISTRATION_ROUTE, USER_ROUTE, ACTIVATE_ROUTE, FEED_ROUTE} from "../Utils/const";
 import AdminPageContainer from "./AdminPage/AdminPageContainer";
 import UserPageContainer from "./UserPage/UserPageContainer";
 import RegLogPageContainer from "./RegLogPage/RegLogPageContainer";
 import {store} from "../ReduxToolkit";
 import {getUser} from "../ReduxToolkit/Selectors/UserSelector";
-import ConfirmPage from "./ConfirmPage/ConfirmPage";
 import ConfirmPageContainer from "./ConfirmPage/ConfirmPageContainer";
+import PostPageContainer from "./PostPage/PostPageContainer";
 
 
 export const authRoutes = [
@@ -17,6 +17,10 @@ export const authRoutes = [
     {
         path: ACTIVATE_ROUTE,
         component: <ConfirmPageContainer/>
+    },
+    {
+        path: FEED_ROUTE,
+        component: <PostPageContainer/>
     }
 ]
 

@@ -1,28 +1,29 @@
 import React, {useEffect} from 'react';
 import {connect} from "react-redux";
 import WorkPage from "./WorkPage";
-import {
-    addListThunk,
-    changeInput,
-    deleteListThunk,
-    getDataThunk,
-} from "../../ReduxToolkit/Slice/AppSlice";
-
-import {
-    getData,
-    getFile,
-    getFileFormActive, getImage,
-    getInput,
-    getListError,
-    getSuccess
-} from "../../ReduxToolkit/Selectors/AppSelector";
-import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
 import {Navigate} from "react-router-dom";
 import {ACTIVATE_ROUTE, LOGIN_ROUTE} from "../../Utils/const";
+import WithPreloader from "../../Hoс/WithPreloader";
+import {compose} from "redux";
+import {
+    addMyPostThunk, changeInput,
+    deleteMyPostThunk,
+    getMyPostsThunk,
+} from "../../ReduxToolkit/Slice/PostSlice";
+import {
+    getInput,
+    getMyPosts,
+    getPostError,
+    getPostInput,
+    getPostsLoad
+} from "../../ReduxToolkit/Selectors/PostSelector";
+import {getUser} from "../../ReduxToolkit/Selectors/UserSelector";
+import Loader from "../Loader";
+
 
 const WorkPageContainer = (props) => {
     useEffect(() => {
-        props.getDataThunk()
+        props.getMyPostsThunk()
     }, [])
     if (!props.User.IsAuth) {
         return <Navigate to={LOGIN_ROUTE}/>
@@ -30,25 +31,24 @@ const WorkPageContainer = (props) => {
     if (!props.User.Activated) {
         return <Navigate to={ACTIVATE_ROUTE}/>
     }
+    if (props.Load) {
+        return <Loader/>
+    }
     return <WorkPage {...props} />
 };
 
 const mapStateToProps = (state) => {
     return {
-        Success: getSuccess(state),
-        Data: getData(state),
-        Input: getInput(state),
+        Posts: getMyPosts(state),
+        Input: getPostInput(state),
+        PostError: getPostError(state),
         User: getUser(state),
-        ListError: getListError(state),
-        FileFormActive: getFileFormActive(state),
-        File: getFile(state),
-        Image: getImage(state)
+        Load: getPostsLoad(state)
     }
 }
 
-export default connect(mapStateToProps, {
-    getDataThunk,
-    deleteListThunk,
-    changeInput,
-    addListThunk,
-})(WorkPageContainer);
+export default compose(
+    connect(mapStateToProps, {
+        getMyPostsThunk, deleteMyPostThunk,
+        changeInput, addMyPostThunk,
+    }))(WorkPageContainer);
