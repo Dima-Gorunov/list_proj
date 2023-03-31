@@ -43,5 +43,4 @@ Token.belongsTo(User)
 List.hasMany(File)
 File.belongsTo(List)
 
-
 module.exports = {User, List, File, Token}

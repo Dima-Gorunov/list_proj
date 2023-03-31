@@ -3,15 +3,18 @@ import FileIcon from "../../Svg/FileIcon";
 import CustomButton from "../CustomElements/CustomButton";
 import moment from "moment";
 import AvatarDefaultImg from "../../Svg/AvatarDefault.jpg";
+import {loadMoreMyPostsThunk} from "../../ReduxToolkit/Slice/PostSlice";
 
 const WorkPage = (props) => {
 
     const [File, setFile] = useState(null)
     const [Drag, setDrag] = useState(false)
+    const [Page, setPage] = useState(1)
     const change = (e) => {
         e.preventDefault()
         props.changeInput(e.currentTarget.value)
     }
+
     const addPost = async (e) => {
         e.preventDefault()
         let formData = new FormData()
@@ -31,12 +34,19 @@ const WorkPage = (props) => {
         e.preventDefault()
         setDrag(true)
     }
+
     const dragLeaveHandler = (e) => {
         e.preventDefault()
     }
+
     const onDropHandler = (e) => {
         e.preventDefault()
         setFile(e.dataTransfer.files[0])
+    }
+
+    const loadMore = () => {
+        props.loadMoreMyPostsThunk(Page + 1)
+        setPage(Page + 1)
     }
 
     return (
@@ -106,7 +116,7 @@ const WorkPage = (props) => {
             <div>
                 {props.Posts && props.Posts.map((e, index) => (
                     <div className="mb-3 dark_container" style={{}} key={`div n${index}`}>
-                        <div className=" p-3 mb-3" style={{}} key={`d_post${index}`}>
+                        <div className=" p-3" style={{}} key={`d_post${index}`}>
                             <div className="d-flex mb-2">
                                 <div className="me-2" style={{width: "44px", height: "44px"}}>
                                     <img style={{width: "100%", height: "100%", borderRadius: "22px"}}
@@ -121,7 +131,7 @@ const WorkPage = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <div>
+                            <div className="mb-2">
                                 {e.text}
                             </div>
                             <div className="d-flex justify-content-between">
@@ -141,7 +151,11 @@ const WorkPage = (props) => {
                                 </button>
                             </div>
                         </div>
-                    </div>))}
+                    </div>
+                ))}
+                <div className="text-center mb-3">
+                    <CustomButton onClick={loadMore}>загрузить ещё</CustomButton>
+                </div>
             </div>
         </div>
     );

@@ -8,7 +8,7 @@ import {compose} from "redux";
 import {
     addMyPostThunk, changeInput,
     deleteMyPostThunk,
-    getMyPostsThunk,
+    getMyPostsThunk, loadMoreMyPostsThunk,
 } from "../../ReduxToolkit/Slice/PostSlice";
 import {
     getInput,
@@ -51,4 +51,5 @@ export default compose(
     connect(mapStateToProps, {
         getMyPostsThunk, deleteMyPostThunk,
         changeInput, addMyPostThunk,
+        loadMoreMyPostsThunk
     }))(WorkPageContainer);

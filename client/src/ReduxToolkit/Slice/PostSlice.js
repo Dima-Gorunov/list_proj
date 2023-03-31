@@ -10,13 +10,17 @@ const PostSlice = createSlice({
             Posts: null
         },
         Input: "",
-        PostError: "",
+        PostError: ""
     },
     reducers: {
         setPosts(state, {payload}) {
-            if (state.Posts !== payload) {
-                state.Posts = payload || null
-            }
+            state.Posts = payload || null
+        },
+        loadMorePosts(state, {payload}) {
+            state.Posts = state.Posts.concat(payload)
+        },
+        loadMoreMyPosts(state, {payload}) {
+            state.MyProfile.Posts = state.MyProfile.Posts.concat(payload)
         },
         setMyPosts(state, {payload}) {
             state.MyProfile.Posts = payload || null
@@ -27,9 +31,11 @@ const PostSlice = createSlice({
         setLoad(state, {payload}) {
             state.Load = payload
         },
-
         changeInput(state, {payload}) {
             state.Input = payload
+        },
+        setPage(state, {payload}) {
+            state.Page = payload
         },
         addMyPost(state, {payload}) {
             if (!state.MyProfile.Posts) {
@@ -67,29 +73,51 @@ export const setPostsInfoThunk = (page, perPage) => {
             dispatch(setPosts(lists.data))
             dispatch(setLoad(false))
         } catch (e) {
-            console.log(e.message);
+            console.log(e.response?.data?.message || e.message);
             dispatch(setLoad(false))
+        }
+    }
+}
+
+export const loadMorePostsThunk = (page) => {
+    return async (dispatch) => {
+        try {
+            const loadPost = await ListApi.getAllList(page)
+            dispatch(loadMorePosts(loadPost.data))
+        } catch (e) {
+            console.log(e.response?.data?.message || e.message);
         }
     }
 }
 
 // Posts on profile page
 
-export const getMyPostsThunk = () => {
+export const getMyPostsThunk = (page, perPage) => {
     return async (dispatch) => {
         try {
             dispatch(setLoad(true))
-            const response = await ListApi.getList()
+            const response = await ListApi.getMyList(page, perPage)
             dispatch(setMyPosts(response.data))
             dispatch(sortMyPosts())
             dispatch(setLoad(false))
         } catch (e) {
-            console.log(e.message);
+            console.log(e.response?.data?.message || e.message);
             dispatch(setMyPosts(null))
             dispatch(setLoad(false))
         }
     }
 }
+export const loadMoreMyPostsThunk = (page, perPage) => {
+    return async (dispatch) => {
+        try {
+            const loadPost = await ListApi.getMyList(page)
+            dispatch(loadMoreMyPosts(loadPost.data))
+        } catch (e) {
+            console.log(e.response?.data?.message || e.message);
+        }
+    }
+}
+
 
 export const deleteMyPostThunk = (id) => {
     return async (dispatch) => {
@@ -97,7 +125,7 @@ export const deleteMyPostThunk = (id) => {
             const response = await ListApi.deleteList(id)
             dispatch(deleteMyPost(response.data.id))
         } catch (e) {
-            console.log(e.message);
+            console.log(e.response?.data?.message || e.message);
         }
     }
 }
@@ -110,7 +138,7 @@ export const addMyPostThunk = (formData) => {
             dispatch(sortMyPosts())
             dispatch(changeInput(""))
         } catch (e) {
-            console.log(e.message);
+            console.log(e.response?.data?.message || e.message);
         }
     }
 }
@@ -123,7 +151,9 @@ export const {
     addMyPost,
     deleteMyPost,
     changeInput,
-    sortMyPosts
-
+    sortMyPosts,
+    loadMorePosts,
+    loadMoreMyPosts,
+    setPage
 
 } = PostSlice.actions

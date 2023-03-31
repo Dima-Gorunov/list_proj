@@ -1,5 +1,3 @@
-const uuid = require('uuid')
-const path = require('path')
 const {User} = require("../models/models");
 const {List} = require('../models/models')
 const {File} = require('../models/models')
@@ -36,33 +34,44 @@ class ListController {
     }
 
     async deleteList(req, res) {
-        const {id} = req.body
-        const list = await List.findOne({where: {id: id}})
-        if (!list) {
-            return res.status(400).json({result_code: 1, message: "list not found"})
-        }
-        if (list.img) {
-            const file = await File.findOne({where: {url: list.img}})
-            console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-            console.log(list.img)
-            console.log(file)
-            await File.destroy({where: {url: list.img}}).then(() => {
-                fs.unlink(join(file.path + "/" + file.name), (err) => {
-                    console.log(err);
+        try {
+
+            const {id} = req.body
+            const list = await List.findOne({where: {id: id}})
+            if (!list) {
+                return res.status(400).json({result_code: 1, message: "list not found"})
+            }
+            if (list.img) {
+                const file = await File.findOne({where: {url: list.img}})
+                await File.destroy({where: {url: list.img}}).then(() => {
+                    fs.unlink(join(file.path + "/" + file.name), (err) => {
+                        console.log(err);
+                    })
                 })
-            })
+            }
+            await List.destroy({where: {id: id}})
+            return res.json(list)
+        } catch (e) {
+            return res.status(500).json({result_code: 1, message: e.message})
         }
-        await List.destroy({where: {id: id}})
-        return res.json(list)
     }
 
     async getAllMy(req, res) {
         try {
             const senderId = req.user.id // sender
+            const page = parseInt(req.query.page) || 1;
+            const perPage = parseInt(req.query.perPage) || 10;
             if (!senderId || senderId === "null") {
                 return res.status(400).json({result_code: 1, message: "incorrect request (!userId)"})
             }
-            const lists = await List.findAll({where: {userId: senderId}})
+            const offset = (page - 1) * perPage;
+            const limit = perPage;
+            const lists = await List.findAll({
+                where: {userId: senderId},
+                limit: limit,
+                offset: offset,
+                order: [['createdAt', 'DESC']]
+            })
             if (!lists || lists.length === 0) {
                 return res.status(400).json({result_code: 1, message: "list not exist"})
             }
@@ -90,7 +99,7 @@ class ListController {
             let users = await User.findAll({where: {id: usersId}})
             users = users.map(e => new UserInfoDto(e))
             let posts = lists.map(list => {
-                const user = users.find(e=>e.id===list.userId)
+                const user = users.find(e => e.id === list.userId)
                 return {list, user}
             })
             return res.json(posts)

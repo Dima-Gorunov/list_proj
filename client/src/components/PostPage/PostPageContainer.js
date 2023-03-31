@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 import PostPage from "./PostPage";
 import {connect, useSelector} from "react-redux";
 import {compose} from "redux";
-import {setPostsInfoThunk} from "../../ReduxToolkit/Slice/PostSlice";
-import {getPosts, getPostsLoad} from "../../ReduxToolkit/Selectors/PostSelector";
+import {loadMorePostsThunk, setPage, setPostsInfoThunk} from "../../ReduxToolkit/Slice/PostSlice";
+import {getPage, getPosts, getPostsLoad} from "../../ReduxToolkit/Selectors/PostSelector";
 import Loader from "../Loader";
 
 const PostPageContainer = (props) => {
@@ -20,9 +20,10 @@ const PostPageContainer = (props) => {
 const mapStateToProps = (state) => {
     return {
         Posts: getPosts(state),
-        Load: getPostsLoad(state)
+        Load: getPostsLoad(state),
+        Page: getPage(state)
     }
 }
 export default compose(
-    connect(mapStateToProps, {setPostsInfoThunk})
+    connect(mapStateToProps, {setPostsInfoThunk, loadMorePostsThunk, setPage})
 )(React.memo(PostPageContainer));
