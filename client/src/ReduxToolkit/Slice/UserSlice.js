@@ -56,6 +56,7 @@ export const regThunk = (email, password) => {
             const userInfo = await AuthApi.getMyInfo()
             dispatch(setUser(userInfo.data.user))
             dispatch(setLoad(false))
+            dispatch(setUserError(null))
         } catch (e) {
             console.log(e.response?.data?.message);
             dispatch(setUserError(e.response?.data?.message || "Error"))
@@ -75,6 +76,7 @@ export const loginThunk = (email, password) => {
             const userInfo = await AuthApi.getMyInfo()
             dispatch(setUser(userInfo.data.user))
             dispatch(setLoad(false))
+            dispatch(setUserError(null))
         } catch (e) {
             console.log(e.response?.data?.message);
             dispatch(setUserError(e.response?.data?.message || "Error"))
@@ -124,6 +126,7 @@ export const setAvatarThunk = (formData) => {
             const response = await AuthApi.setAvatar(formData)
             dispatch(setAvatar(response.data.avatarUrl))
             dispatch(setLoad(false))
+            dispatch(setUserError(null))
         } catch (e) {
             dispatch(setLoad(false))
             console.log(e.response?.data?.message);
