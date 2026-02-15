@@ -59,13 +59,13 @@ services:
             - PGUSER=your_dev_user
             - PGPASSWORD=your_dev_password
             - DIALECT=postgres
-            - PGHOST=postgres_db
+            - PGHOST=postgres_db # Название контейнера!
             - SERVER_NAME=http://localhost:5000
             - CLIENT_NAME=http://localhost
             - JWT_ACCESS_STRING=your_jwt_access_secret
             - JWT_REFRESH_STRING=your_jwt_refresh_secret
-            - FILE_PATH=/usr/src/C/Folder1
-            - FILE_PATH2=/usr/src/D/Folder1
+            - FILE_PATH=/usr/src/C/Folder1 # Совпадать с volumes после ":"!
+            - FILE_PATH2=/usr/src/D/Folder1 # Совпадать с volumes после ":"!
             - SECRET_ADMIN_STRING=your-secret-for-admin
             - SMTP_HOST=your_smtp_host
             - SMTP_PORT=your_smtp_port
