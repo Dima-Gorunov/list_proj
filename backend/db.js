@@ -1,18 +1,8 @@
-const {Sequelize} = require("sequelize")
-const {
-    pgDatabase,
-    pgUser,
-    pgPassword,
-    dialect,
-    host,
-} = require('./constant')
+const { Sequelize } = require("sequelize");
+const { pgDatabase, pgUser, pgPassword, dialect, host } = require("./constant");
 
-module.exports = new Sequelize(
-    pgDatabase,
-    pgUser,
-    pgPassword,
-    {
-        dialect: dialect,
-        host: host     // localhost, docker container name...
-    }
-)
+module.exports = new Sequelize(pgDatabase, pgUser, pgPassword, {
+    dialect: dialect,
+    host: host, // localhost, docker container name...
+    timezone: "+00:00", // Использовать UTC
+});

@@ -1,0 +1,1 @@
+export { ProtectedMedia } from "./ui";

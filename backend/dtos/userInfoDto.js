@@ -4,8 +4,8 @@ module.exports = class UserInfoDto {
     activated;
     role;
     username;
-    first_name;
-    last_name;
+    firstName;
+    lastName;
     gender;
     avatar;
 
@@ -15,9 +15,11 @@ module.exports = class UserInfoDto {
         this.activated = model.activated;
         this.role = model.role;
         this.username = model.username;
-        this.first_name = model.first_name;
-        this.last_name = model.last_name;
+        this.firstName = model.firstName;
+        this.lastName = model.lastName;
         this.gender = model.gender;
         this.avatar = model.avatar;
+        this.createdAt = model.createdAt;
+        this.updatedAt = model.updatedAt;
     }
 }

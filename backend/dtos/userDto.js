@@ -4,8 +4,8 @@ module.exports = class UserDto {
     activated;
     role;
     username;
-    first_name;
-    last_name;
+    firstName;
+    lastName;
     gender;
     avatar;
 

@@ -1,0 +1,27 @@
+@use "../1_app/ui/constants";
+
+.MobileBarButton {
+    display: none;
+}
+.headerLogo {
+}
+
+.MobileBar {
+    display: none;
+    position: absolute;
+    z-index: 999;
+}
+@media (max-width: constants.$max-width-for-mobile) {
+    .sidebar {
+        display: none;
+    }
+    .MobileBarButton {
+        display: block;
+    }
+    .headerLogo {
+        display: none;
+    }
+    .MobileBar {
+        display: block;
+    }
+}

@@ -1,13 +1,7 @@
-const nodemailer = require('nodemailer')
-const {
-    serverName, smtpHost,
-    smtpPort,
-    smtpUser,
-    smtpPassword,
-} = require("../constant")
+const nodemailer = require("nodemailer");
+const { serverName, smtpHost, smtpPort, smtpUser, smtpPassword } = require("../constant");
 
 class MailService {
-
     constructor() {
         this.transporter = nodemailer.createTransport({
             host: smtpHost,
@@ -15,9 +9,9 @@ class MailService {
             secure: false,
             auth: {
                 user: smtpUser,
-                pass: smtpPassword
-            }
-        })
+                pass: smtpPassword,
+            },
+        });
     }
 
     async sendActivationMail(to, link) {
@@ -26,16 +20,14 @@ class MailService {
             to: to,
             subject: `Активация аккаунта на ${serverName}`,
             text: ``,
-            html:
-                `
+            html: `
                 <div>
                     <h1>Для активации аккаунта перейдите по ссылке: </h1>
                     <a href=${link}>${link}</a>
                 </div>    
-            `
-        })
+            `,
+        });
     }
-
 }
 
-module.exports = new MailService()
+module.exports = new MailService();

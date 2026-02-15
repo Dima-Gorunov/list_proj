@@ -1,0 +1,47 @@
+@use './constants';
+@use "../../3_widgets/index.scss";
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+}
+
+#root {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.button_red {
+    background-color: red;
+}
+
+.test {
+    background-color: blue;
+}
+
+.loader {
+    height: 100%;
+    width: 100%;
+    position: static;
+    background: linear-gradient(43deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7));
+    background-size: 400% 400%;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-animation:
+        moveBackground 2s ease infinite,
+        fade 1s ease-in-out;
+    -moz-animation:
+        moveBackground 2s ease infinite,
+        fade 1s ease-in-out;
+    animation:
+        moveBackground 2s ease infinite,
+        fade 1s ease-in-out;
+}

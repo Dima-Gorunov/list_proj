@@ -1,51 +1,76 @@
-version: '3'
+# version: "3" можно удалить
+
+# при изменениях
+# docker-compose down && docker-compose up -d --build
+
+
+# подключиться к бд в контейнере
+# docker-compose exec postgres_db psql -U your_dev_user -d your_dev_database
+
 services:
-  postgres_db:
-    container_name: "postgres_db_container"
-    image: postgres:latest
-    restart: always
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=
-      - POSTGRES_PASSWORD=
-      - POSTGRES_DB=
-    volumes:
-      - ./database_data:/var/lib/postgresql/data
-  client_nginx:
-    container_name: "client_nginx_container"
-    restart: always
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    volumes:
-      - ./client/nginx/nginx.conf:/etc/nginx/nginx.conf
-  backend:
-    container_name: "backend_container"
-    depends_on:
-      - postgres_db
-    restart: always
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
-    command: npm run start
-    environment:
-      - PGDATABASE=
-      - PGUSER=
-      - PGPASSWORD=
-      - DIALECT=
-      - PGHOST=
-      - SERVER_NAME=
-      - CLIENT_NAME=
-      - JWT_ACCESS_STRING=
-      - JWT_REFRESH_STRING=
-      - SMTP_HOST=
-      - SMTP_PORT=
-      - SMTP_USER=
-      - SMTP_APP_PASSWORD=
-    volumes:
-      - ./files:/usr/src/files
+    postgres_db:
+        container_name: "postgres_db_container"
+        image: postgres:17
+        restart: always
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=your_dev_user
+            - POSTGRES_PASSWORD=your_dev_password
+            - POSTGRES_DB=your_dev_database
+        volumes:
+            - C:/database-list-proj/:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U your_dev_user -d your_dev_database"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+            start_period: 15s
+
+    client_nginx:
+        container_name: "client_nginx_container"
+        restart: always
+        build:
+            context: ./client
+            dockerfile: Dockerfile
+            args:
+                - SERVER_NAME=http://localhost:5000
+        ports:
+            - "80:80"
+        volumes:
+            - ./client/nginx/nginx.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - backend
+
+    backend:
+        container_name: "backend_container"
+        depends_on:
+            postgres_db:
+                condition: service_healthy # Критически важно!
+        restart: always
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        ports:
+            - "5000:5000"
+        command: npm run start
+        environment:
+            - PGDATABASE=your_dev_database
+            - PGUSER=your_dev_user
+            - PGPASSWORD=your_dev_password
+            - DIALECT=postgres
+            - PGHOST=postgres_db
+            - SERVER_NAME=http://localhost:5000
+            - CLIENT_NAME=http://localhost
+            - JWT_ACCESS_STRING=your_jwt_access_secret
+            - JWT_REFRESH_STRING=your_jwt_refresh_secret
+            - FILE_PATH=/usr/src/C/Folder1
+            - FILE_PATH2=/usr/src/D/Folder1
+            - SECRET_ADMIN_STRING=your-secret-for-admin
+            - SMTP_HOST=your_smtp_host
+            - SMTP_PORT=your_smtp_port
+            - SMTP_USER=your_smtp_user
+            - SMTP_APP_PASSWORD=your_smtp_app_password
+        volumes:
+            - C:/Folder1:/usr/src/C/Folder1
+            - D:/Folder1:/usr/src/D/Folder1

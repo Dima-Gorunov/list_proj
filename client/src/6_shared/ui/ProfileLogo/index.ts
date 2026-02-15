@@ -1,0 +1,1 @@
+export { ProfileLogo } from "./ui";
